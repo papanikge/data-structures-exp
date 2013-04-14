@@ -33,7 +33,7 @@ typedef struct {
 /* panic function for fatal errors */
 void fatal(char *message)
 {
-	fprintf(stderr, "\a!!! Fatal error: %s\n", message);
+	fprintf(stderr, "\a*** Fatal error: %s\n", message);
 	exit(EXIT_FAILURE);
 }
 
@@ -42,7 +42,7 @@ void* ec_malloc(const unsigned int size)
 {
 	void *ptr;
 	ptr = malloc(size);
-	if(ptr == NULL)
+	if(!ptr)
 		fatal("on memory allocation");
 	return ptr;
 }
@@ -74,14 +74,27 @@ int main(int argc, const char **argv)
 	else
 		strcpy(filename, "datafile.db");
 
-	create_db(filename);
+	/* create_db(filename); */
 
-	/* testing a structure */
-	Author *f;
-	f=ec_malloc(sizeof(Author));
-	f->first="Isaac";
-	f->last ="Newton";
-	printf("%s\n",f->last);
+	printf("[1] Load books from file\n");
+	printf("[2] Save books to file\n");
+	printf("[3] Add a book\n");
+	printf("[4] Delete a book by id\n");
+	printf("[5] Display a book by id\n");
+	printf("[6] Display a book by title\n");
+	printf("[7] Display books\n");
+	printf("[8] Display books by surname search\n");
+	printf("[9] Exit\n");
+
+	/* testing the array inside of the structs */
+	Book *f;
+	f=ec_malloc(sizeof(Book));
+	Author a[2];
+	a[0].first="Albert";
+	a[1].last="Dirac";
+	/* a static array in the pointer of the struct inside the struct */
+	f->authors = a;
+	printf("%s\n",f->authors[1].last);
 	free(f);
 
 	/* Done. Finish the job. */
