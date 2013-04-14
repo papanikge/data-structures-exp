@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define MAXENTRY 80
+
 /* author type for names */
 typedef struct {
 	char *first;
@@ -20,14 +22,14 @@ typedef struct {
 	int    id;
 	char   *title;
 	char   *summary;
-	int    num_authors;
+	int    numberOfAuthors;
 	Author *authors;
 } Book;
 
 /* the wrapper around the dynamic array of the managed books */
 typedef struct {
 	Book *arr;
-	int  count;
+	int  numberOfBooks;
 } Data;
 
 /* panic function for fatal errors */
@@ -48,20 +50,25 @@ void* ec_malloc(const unsigned int size)
 }
 
 /* get a valid option from user */
-char get_option()
+int get_option()
 {
-	char in;
-	printf("Option? [1..9] ");
-	in = (char)getchar();
-	return in;
+	int in;
+	do {
+		in = getchar();
+	} while (in < 48 || in > 57);
+	/* stop it ascii */
+	return (in -= 48);
 }
 
 /* init db, first menu option function */
 void create_db(const char *file)
 {
 	FILE *fd;
+	char buf[MAXENTRY];
 	fd = fopen(file, "r");
-	/* TODO read file and create database array */
+	while (fgets(buf, MAXENTRY, fd) != NULL) {
+		/* code */
+	}
 	fclose(fd);
 }
 
@@ -87,16 +94,24 @@ int main(int argc, const char **argv)
 	printf("[9] Exit\n");
 
 	/* testing the array inside of the structs */
-	Book *f;
-	f=ec_malloc(sizeof(Book));
+	Book *f = ec_malloc(sizeof(Book));
+
 	Author a[2];
-	a[0].first="Albert";
-	a[1].last="Dirac";
+	a[0].first = "Albert";
+	a[1].last  = "Dirac";
 	/* a static array in the pointer of the struct inside the struct */
 	f->authors = a;
 	printf("%s\n",f->authors[1].last);
+
 	free(f);
 
-	/* Done. Finish the job. */
+	/* main loop */
+	short opt;
+	while ((opt = get_option()) != 9) {
+		printf("%d\n", opt);
+	}
+
+	/* got exit command. save and quit */
+
 	return 0;
 }

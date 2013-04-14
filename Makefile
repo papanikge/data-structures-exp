@@ -16,6 +16,6 @@ base: base.c
 	$(CC) $(WARN) $(OPT) $(FLAGS) $? -o $@
 
 clean:
-	-@rm a.out datafile.db || true
+	-@rm base a.out datafile.db || true
 
 .PHONY: clean
