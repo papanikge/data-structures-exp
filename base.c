@@ -50,14 +50,36 @@ void* ec_malloc(const unsigned int size)
 }
 
 /* get a valid option from user */
-int get_option()
+int get_option(void)
 {
 	int in;
 	do {
 		in = getchar();
 	} while (in < 48 || in > 57);
-	/* stop it ascii */
-	return (in -= 48);
+	/* damn you ascii */
+	return (in - 48);
+}
+
+/* dynamically change the authors array in a given book struct */
+void add_author(Book* b, char* f, char* l)
+{
+	Author *a;
+	short index = b->numberOfAuthors;
+	/* creating or reallocating the proper array */
+	if (index == 0) {
+		a = ec_malloc(sizeof(Author));
+	} else {
+		int s = sizeof(Author)*(index+1);
+		printf("THE SIZE: %d\n", s);
+		a = realloc(b->authors, s);
+		if (!a) fatal("while reallocating to add author");
+	}
+	/* now add the names and point back */
+	a[index].first = f;
+	a[index].last  = l;
+	b->authors = a;
+	/* increment the counter */
+	b->numberOfAuthors++;
 }
 
 /* init db, first menu option function */
@@ -94,16 +116,8 @@ int main(int argc, const char **argv)
 	printf("[9] Exit\n");
 
 	/* testing the array inside of the structs */
-	Book *f = ec_malloc(sizeof(Book));
-
-	Author a[2];
-	a[0].first = "Albert";
-	a[1].last  = "Dirac";
-	/* a static array in the pointer of the struct inside the struct */
-	f->authors = a;
-	printf("%s\n",f->authors[1].last);
-
-	free(f);
+	Book *b = ec_malloc(sizeof(Book));
+	free(b);
 
 	/* main loop */
 	short opt;
