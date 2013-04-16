@@ -10,6 +10,8 @@
 
 #define MAXENTRY 80
 
+long sumOfBooks = 0;
+
 /* author type for names */
 typedef struct {
 	char *first;
@@ -58,6 +60,18 @@ int get_option(void)
 	} while (in < 48 || in > 57);
 	/* damn you ascii */
 	return (in - 48);
+}
+
+/* create and return a book struct */
+Book* create_book(char* name, char* sum)
+{
+	Book *b = ec_malloc(sizeof(Book));
+	b->id = sumOfBooks;
+	sumOfBooks++;
+	b->title = name;
+	b->summary = sum;
+	b->numberOfAuthors = 0;
+	return b;
 }
 
 /* dynamically change the authors array in a given book struct */
@@ -116,8 +130,10 @@ int main(int argc, const char **argv)
 	printf("[9] Exit\n");
 
 	/* testing the array inside of the structs */
-	Book *b = ec_malloc(sizeof(Book));
-	free(b);
+	
+	Book *b = create_book("Digital Fortress", "I have no idea");
+	add_author(b, "Dan", "Brown");
+	printf("is it Dan? %s\n", b->authors[0].first);
 
 	/* main loop */
 	short opt;
