@@ -1,7 +1,7 @@
 /**
  * George Papanikolaou 2013
  * Data structures project --- CEID
- * There is absolutely no warranty
+ * There is Absolutely NO Warranty.
  */
 
 #include <stdio.h>
@@ -132,11 +132,6 @@ int main(int argc, const char **argv)
 	printf("[7] Display books\n");
 	printf("[8] Display books by surname search\n");
 	printf("[9] Exit\n");
-
-	/* testing the array inside of the structs */
-	Book *b = create_book("Digital Fortress", "I have no idea");
-	add_author(b, "Dan", "Brown");
-	printf("is it Dan? %s\n", b->authors[0].first);
 
 	/* main loop */
 	short opt;
