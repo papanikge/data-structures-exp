@@ -10,6 +10,7 @@
 
 #define MAXENTRY 80
 
+/* for the individual ids of book structs */
 long sumOfBooks = 0;
 
 /* author type for names */
@@ -35,7 +36,7 @@ typedef struct {
 } Data;
 
 /* panic function for fatal errors */
-void fatal(char *message)
+inline void fatal(char *message)
 {
 	fprintf(stderr, "\a*** Fatal error: %s\n", message);
 	exit(EXIT_FAILURE);
@@ -56,6 +57,7 @@ int get_option(void)
 {
 	int in;
 	do {
+		printf("\nOption? [1..9] ");
 		in = getchar();
 	} while (in < 48 || in > 57);
 	/* damn you ascii */
@@ -83,9 +85,7 @@ void add_author(Book* b, char* f, char* l)
 	if (index == 0) {
 		a = ec_malloc(sizeof(Author));
 	} else {
-		int s = sizeof(Author)*(index+1);
-		printf("THE SIZE: %d\n", s);
-		a = realloc(b->authors, s);
+		a = realloc(b->authors, (sizeof(Author)*(index+1)) );
 		if (!a) fatal("while reallocating to add author");
 	}
 	/* now add the names and point back */
@@ -97,7 +97,7 @@ void add_author(Book* b, char* f, char* l)
 }
 
 /* init db, first menu option function */
-void create_db(const char *file)
+void init_db(const char *file)
 {
 	FILE *fd;
 	char buf[MAXENTRY];
@@ -110,14 +110,14 @@ void create_db(const char *file)
 
 int main(int argc, const char **argv)
 {
-	/* initialize */
+	/* handle data base file name */
 	char filename[50];
 	if (argc >= 2)
 		strcpy(filename, argv[1]);
 	else
 		strcpy(filename, "datafile.db");
 
-	/* create_db(filename); */
+	/* init_db(filename); */
 
 	printf("[1] Load books from file\n");
 	printf("[2] Save books to file\n");
@@ -130,7 +130,6 @@ int main(int argc, const char **argv)
 	printf("[9] Exit\n");
 
 	/* testing the array inside of the structs */
-	
 	Book *b = create_book("Digital Fortress", "I have no idea");
 	add_author(b, "Dan", "Brown");
 	printf("is it Dan? %s\n", b->authors[0].first);
@@ -138,10 +137,38 @@ int main(int argc, const char **argv)
 	/* main loop */
 	short opt;
 	while ((opt = get_option()) != 9) {
-		printf("%d\n", opt);
+		switch (opt) {
+			case 1:
+				/* init_db(filename); */
+				break;
+			case 2:
+				/* save_db(); */
+				break;
+			case 3:
+				/* add a book */
+				break;
+			case 4:
+				/* remove a book */
+				break;
+			case 5:
+				/* search by id */
+				break;
+			case 6:
+				/* search by name */
+				break;
+			case 7:
+				/* display all */
+				break;
+			case 8:
+				/* search by last name of author */
+				break;
+			default:
+				fatal("get_option() returns something wrong");
+				break;
+		}
 	}
 
 	/* got exit command. save and quit */
-
+	/* save_db(); */
 	return 0;
 }
