@@ -8,8 +8,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* maximum book struct size (included pointed strings) */
-#define MAXENTRY 300
+/* maximum sizes (included pointed strings) */
+#define MAXAUTHOR 100
+#define MAXTITLE 256
+#define MAXPUBL  40
+#define MAXENTRY (MAXTITLE + MAXPUBL + sizeof(Book))
 
 /* for the individual ids of book structs */
 long idSum = 0;
@@ -100,14 +103,84 @@ void add_author(Book* b, char* f, char* l)
 	b->numberOfAuthors++;
 }
 
-/* init db, first menu option function */
+/* load and initialize db from file first menu option function */
 void init_db(const char *file)
 {
+	/* temp buffers and descriptors */
 	FILE *fd;
-	char buf[MAXENTRY];
+	short i;   /* for the temp index */
+	short j;   /* for the line index */
+	char line[MAXENTRY];
+	char book_name[MAXTITLE];
+	char writer[MAXAUTHOR];
+	char the_year[4];
+	char pub_name[MAXPUBL];
 	fd = fopen(file, "r");
-	while (fgets(buf, MAXENTRY, fd) != NULL) {
-		/* code */
+	if (!fd)
+		fatal("while opening data file");
+	/* get the total number of books */
+	if (!fgets(line, 8, fd))
+		fatal("while reading data file");
+	long n = atol(line);
+	/* the main database */
+	Data* db = ec_malloc(sizeof(Book)*n);
+	db->numberOfBooks = n;
+	/* start parsing the file, delimiter is ';' */
+	while (fgets(line, MAXENTRY, fd) != NULL) {
+		j = 0;
+		/* first the name */
+		i = 0;
+		while (line[j] != ';') {
+			/* don't wrap my strings in "" */
+			if (line[j] == '"') {
+				j++;
+				continue;
+			}
+			book_name[i] = line[j];
+			i++;
+			j++;
+		}
+		j++;
+		/* second the author */
+		i = 0;
+		while (line[j] != ';') {
+			if (line[j] == '"') {
+				j++;
+				continue;
+			}
+			writer[i] = line[j];
+			i++;
+			j++;
+		}
+		j++;
+		/* next the year */
+		i = 0;
+		while (line[j] != ';') {
+			if (line[j] == '"') {
+				j++;
+				continue;
+			}
+			the_year[i] = line[j];
+			i++;
+			j++;
+		}
+		j++;
+		/* and last one is the publisher */
+		i = 0;
+		while (line[j] != '\n') {
+			if (line[j] == '"') {
+				j++;
+				continue;
+			}
+			pub_name[i] = line[j];
+			i++;
+			j++;
+		}
+		/* done. create it */
+		Book *B = create_book(book_name, atoi(the_year), pub_name);
+		add_author(B, writer, "fdsfd");
+		/* put it in the actual database */
+		/* db->arr[TODO] = B; */
 	}
 	fclose(fd);
 }
@@ -121,7 +194,8 @@ int main(int argc, const char **argv)
 	else
 		strcpy(filename, "datafile.db");
 
-	/* init_db(filename); */
+	printf("Loading file...\n");
+	init_db(filename);
 
 	printf("[1] Load books from file\n");
 	printf("[2] Save books to file\n");
