@@ -24,7 +24,8 @@ typedef struct {
 typedef struct {
 	int    id;
 	char   *title;
-	char   *summary;
+	char   *publisher;
+	short  yearPublished;
 	int    numberOfAuthors;
 	Author *authors;
 } Book;
@@ -65,13 +66,15 @@ int get_option(void)
 }
 
 /* create and return a book struct */
-Book* create_book(char* name, char* sum)
+Book* create_book(char* name, short year, char* pub)
 {
 	Book *b = ec_malloc(sizeof(Book));
 	b->id = sumOfBooks;
 	sumOfBooks++;
+	/* the rest */
 	b->title = name;
-	b->summary = sum;
+	b->publisher = pub;
+	b->yearPublished = year;
 	b->numberOfAuthors = 0;
 	return b;
 }
