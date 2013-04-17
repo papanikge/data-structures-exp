@@ -8,10 +8,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAXENTRY 80
+/* maximum book struct size (included pointed strings) */
+#define MAXENTRY 300
 
 /* for the individual ids of book structs */
-long sumOfBooks = 0;
+long idSum = 0;
 
 /* author type for names */
 typedef struct {
@@ -33,7 +34,7 @@ typedef struct {
 /* the wrapper around the dynamic array of the managed books */
 typedef struct {
 	Book *arr;
-	int  numberOfBooks;
+	long  numberOfBooks;
 } Data;
 
 /* panic function for fatal errors */
@@ -69,8 +70,8 @@ int get_option(void)
 Book* create_book(char* name, short year, char* pub)
 {
 	Book *b = ec_malloc(sizeof(Book));
-	b->id = sumOfBooks;
-	sumOfBooks++;
+	b->id = idSum;
+	idSum++;
 	/* the rest */
 	b->title = name;
 	b->publisher = pub;
