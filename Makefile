@@ -7,7 +7,7 @@ WARN=-Wall -Wextra
 OPT=-O0
 FLAGS=-g
 
-# all compiles and runs
+# default target that compiles and runs
 all: base
 	@./base
 
@@ -16,6 +16,6 @@ base: base.c
 	$(CC) $(WARN) $(OPT) $(FLAGS) $? -o $@
 
 clean:
-	-@rm base a.out datafile.db || true
+	-@rm -f base a.out datafile.db
 
 .PHONY: clean
