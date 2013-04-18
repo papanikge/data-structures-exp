@@ -12,7 +12,7 @@
 /* global main in-memory dynamic database */
 Data db;
 /* for the individual ids of book structs */
-long idSum = 0;
+long idSum;
 
 /* create and return a book struct */
 Book* create_book(char* name, short year, char* pub)
@@ -62,6 +62,7 @@ void init_db(const char *file)
 	char last_name[MAXAUTHOR];
 	char the_year[4];
 	char pub_name[MAXPUBL];
+	idSum = 0;
 	fd = fopen(file, "r");
 	if (!fd)
 		fatal("while opening data file");

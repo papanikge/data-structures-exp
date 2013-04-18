@@ -1,6 +1,9 @@
 # Data structures project makefile
 # George Papanikolaou
 # absolutely no warranty
+#
+# $? is for the files on the right of the :
+# $@ is for the target name
 
 CC=gcc
 WARN=-Wall -Wextra
@@ -8,14 +11,14 @@ OPT=-O0
 FLAGS=-g
 
 # default target that compiles and runs
-all: base
-	@./base
+all: books
+	@./program
 
 # the compilation target
-base: base.c
-	$(CC) $(WARN) $(OPT) $(FLAGS) $? -o $@
+books: books.c books.h
+	$(CC) $(WARN) $(OPT) $(FLAGS) books.c -o program
 
 clean:
-	-@rm -f base a.out
+	-@rm -f program a.out
 
 .PHONY: clean
