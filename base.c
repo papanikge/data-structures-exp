@@ -26,7 +26,7 @@ typedef struct {
 /* a single unit type */
 /* more than one author possible */
 typedef struct {
-	int    id;
+	long   id;
 	char   *title;
 	char   *publisher;
 	short  yearPublished;
@@ -36,9 +36,12 @@ typedef struct {
 
 /* the wrapper around the dynamic array of the managed books */
 typedef struct {
-	Book *arr;
+	Book  *arr;
 	long  numberOfBooks;
 } Data;
+
+/* global main in-memory dynamic database */
+Data db;
 
 /* panic function for fatal errors */
 inline void fatal(char *message)
@@ -113,6 +116,8 @@ void init_db(const char *file)
 	char line[MAXENTRY];
 	char book_name[MAXTITLE];
 	char writer[MAXAUTHOR];
+	char first_name[MAXAUTHOR];
+	char last_name[MAXAUTHOR];
 	char the_year[4];
 	char pub_name[MAXPUBL];
 	fd = fopen(file, "r");
@@ -122,9 +127,9 @@ void init_db(const char *file)
 	if (!fgets(line, 8, fd))
 		fatal("while reading data file");
 	long n = atol(line);
-	/* the main database */
-	Data* db = ec_malloc(sizeof(Book)*n);
-	db->numberOfBooks = n;
+	/* allocate the main database */
+	db.arr = ec_malloc(MAXENTRY*n);
+	db.numberOfBooks = n;
 	/* start parsing the file, delimiter is ';' */
 	while (fgets(line, MAXENTRY, fd) != NULL) {
 		j = 0;
@@ -176,11 +181,43 @@ void init_db(const char *file)
 			i++;
 			j++;
 		}
-		/* done. create it */
-		Book *B = create_book(book_name, atoi(the_year), pub_name);
-		add_author(B, writer, "fdsfd");
+		/* done. final work */
+		Book *B;
+		B = create_book(book_name, atoi(the_year), pub_name);
+		/* splitting names. (Multiple authors separated with commas) */
+		j = 0;  /* using `i` and `j` as indexes again to save memory */
+next:
+		/**
+		 * this is the entry point for every author loop, implemented with
+		 * a goto label to save multiple nested while loops
+		 */
+		i = 0;
+		while (writer[j] != '\0' && writer[j] != ',' && writer[j] != ' ') {
+			first_name[i] = writer[j];
+			j++;
+			i++;
+		}
+		/* if we got a space, we go for last name */
+		if (writer[j] == ' ') {
+			i = 0;
+			j++;
+			while (writer[j] != '\0' && writer[j] != ',') {
+				last_name[i] = writer[j];
+				j++;
+				i++;
+			}
+		}
+		/* add him */
+		add_author(B, first_name, last_name);
+		if (writer[j] == ',') {
+			/* with comma, we go for second author */
+			j++;
+			goto next;
+		}
+
 		/* put it in the actual database */
-		/* db->arr[TODO] = B; */
+		db.arr[B->id] = *B;
+		/* the id is incremented inside create_book() */
 	}
 	fclose(fd);
 }
