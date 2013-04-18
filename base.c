@@ -51,7 +51,7 @@ inline void fatal(char *message)
 }
 
 /* a fail-aware malloc function */
-void* ec_malloc(const unsigned int size)
+void* smalloc(const unsigned int size)
 {
 	void *ptr;
 	ptr = malloc(size);
@@ -75,7 +75,7 @@ int get_option(void)
 /* create and return a book struct */
 Book* create_book(char* name, short year, char* pub)
 {
-	Book *b = ec_malloc(sizeof(Book));
+	Book *b = smalloc(sizeof(Book));
 	b->id = idSum;
 	idSum++;
 	/* the rest */
@@ -93,7 +93,7 @@ void add_author(Book* b, char* f, char* l)
 	short index = b->numberOfAuthors;
 	/* creating or reallocating the proper array */
 	if (index == 0) {
-		a = ec_malloc(sizeof(Author));
+		a = smalloc(sizeof(Author));
 	} else {
 		a = realloc(b->authors, (sizeof(Author)*(index+1)) );
 		if (!a) fatal("while reallocating to add author");
@@ -128,7 +128,7 @@ void init_db(const char *file)
 		fatal("while reading data file");
 	long n = atol(line);
 	/* allocate the main database */
-	db.arr = ec_malloc(MAXENTRY*n);
+	db.arr = smalloc(MAXENTRY*n);
 	db.numberOfBooks = n;
 	/* start parsing the file, delimiter is ';' */
 	while (fgets(line, MAXENTRY, fd) != NULL) {
