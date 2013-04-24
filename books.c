@@ -71,7 +71,7 @@ void init_db(const char *file)
 		fatal("while reading data file");
 	long n = atol(line);
 	/* allocate the main database */
-	db.arr = smalloc(MAXENTRY*n+1);
+	db.arr = smalloc(MAXENTRY*n);
 	db.numberOfBooks = n;
 	/* start parsing the file, delimiter is ';' */
 	memset(line, 0, sizeof(line));
@@ -86,7 +86,7 @@ void init_db(const char *file)
 		j = 0;
 		/* first the name */
 		i = 0;
-		while (line[j] != ';') {
+		while (line[j] != ';' && j < 256) {
 			/* don't wrap my strings in "" */
 			if (line[j] == '"') {
 				j++;
@@ -99,7 +99,7 @@ void init_db(const char *file)
 		j++;
 		/* second the author */
 		i = 0;
-		while (line[j] != ';') {
+		while (line[j] != ';' && j < MAXAUTHOR) {
 			if (line[j] == '"') {
 				j++;
 				continue;
@@ -111,7 +111,7 @@ void init_db(const char *file)
 		j++;
 		/* next the year */
 		i = 0;
-		while (line[j] != ';') {
+		while (line[j] != ';' && j < 4) {
 			if (line[j] == '"') {
 				j++;
 				continue;
@@ -123,7 +123,7 @@ void init_db(const char *file)
 		j++;
 		/* and last one is the publisher */
 		i = 0;
-		while (line[j] != '\n') {
+		while (line[j] != '\n' && j < 40) {
 			if (line[j] == '"') {
 				j++;
 				continue;
@@ -143,7 +143,7 @@ next:
 		 * a goto label to save multiple nested while loops
 		 */
 		i = 0;
-		while (writer[j] != '\0' && writer[j] != ',' && writer[j] != ' ') {
+		while (writer[j] != '\0' && writer[j] != ',' && writer[j] != ' ' && j < MAXAUTHOR) {
 			first_name[i] = writer[j];
 			j++;
 			i++;
@@ -152,7 +152,7 @@ next:
 		if (writer[j] == ' ') {
 			i = 0;
 			j++;
-			while (writer[j] != '\0' && writer[j] != ',') {
+			while (writer[j] != '\0' && writer[j] != ',' && j < MAXAUTHOR) {
 				last_name[i] = writer[j];
 				j++;
 				i++;
@@ -167,8 +167,8 @@ next:
 		}
 
 		/* put it in the actual database */
-		db.arr[B->id] = *B;
 		/* the id is incremented inside create_book() */
+		db.arr[B->id] = *B;
 		memset(line, 0, sizeof(line));
 	}
 	fclose(fd);
@@ -196,8 +196,6 @@ int main(int argc, const char **argv)
 	printf("[8] Display books by surname search\n");
 	printf("[9] Exit\n");
 
-	printf("RANDOM: %s\n", db.arr[100].title);
-	printf("RANDOM: %s\n", db.arr[0].title);
 
 	/* main loop */
 	short opt;
