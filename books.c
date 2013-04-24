@@ -21,8 +21,8 @@ Book* create_book(char* name, short year, char* pub)
 	b->id = idSum;
 	idSum++;
 	/* the rest */
-	b->title = name;
-	b->publisher = pub;
+	strcpy(b->title, name);
+	strcpy(b->publisher, pub);
 	b->yearPublished = year;
 	b->numberOfAuthors = 0;
 	return b;
@@ -56,12 +56,12 @@ void init_db(const char *file)
 	short i;   /* for the temp index */
 	short j;   /* for the line index */
 	char line[MAXENTRY];
-	char book_name[MAXTITLE];
+	char book_name[256];
 	char writer[MAXAUTHOR];
 	char first_name[MAXAUTHOR];
 	char last_name[MAXAUTHOR];
 	char the_year[4];
-	char pub_name[MAXPUBL];
+	char pub_name[40];
 	idSum = 0;
 	fd = fopen(file, "r");
 	if (!fd)

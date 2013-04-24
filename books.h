@@ -4,9 +4,7 @@
 
 /* maximum sizes (included pointed strings) */
 #define MAXAUTHOR 100
-#define MAXTITLE 256
-#define MAXPUBL  40
-#define MAXENTRY (MAXTITLE + MAXPUBL + MAXAUTHOR + sizeof(Book))
+#define MAXENTRY (MAXAUTHOR + sizeof(Book))
 
 /* author type for names */
 typedef struct {
@@ -18,8 +16,8 @@ typedef struct {
 /* more than one author possible */
 typedef struct {
 	long   id;
-	char   *title;
-	char   *publisher;
+	char   title[256];
+	char   publisher[40];
 	short  yearPublished;
 	int    numberOfAuthors;
 	Author *authors;
