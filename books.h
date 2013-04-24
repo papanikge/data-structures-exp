@@ -6,7 +6,7 @@
 #define MAXAUTHOR 100
 #define MAXTITLE 256
 #define MAXPUBL  40
-#define MAXENTRY (MAXTITLE + MAXPUBL + sizeof(Book))
+#define MAXENTRY (MAXTITLE + MAXPUBL + MAXAUTHOR + sizeof(Book))
 
 /* author type for names */
 typedef struct {

@@ -71,10 +71,18 @@ void init_db(const char *file)
 		fatal("while reading data file");
 	long n = atol(line);
 	/* allocate the main database */
-	db.arr = smalloc(MAXENTRY*n);
+	db.arr = smalloc(MAXENTRY*n+1);
 	db.numberOfBooks = n;
 	/* start parsing the file, delimiter is ';' */
+	memset(line, 0, sizeof(line));
 	while (fgets(line, MAXENTRY, fd) != NULL) {
+		/* erase the previous data */
+		memset(book_name, 0, sizeof(book_name));
+		memset(writer, 0, sizeof(writer));
+		memset(first_name, 0, sizeof(first_name));
+		memset(last_name, 0, sizeof(last_name));
+		memset(the_year, 0, sizeof(the_year));
+		memset(pub_name, 0, sizeof(pub_name));
 		j = 0;
 		/* first the name */
 		i = 0;
@@ -161,6 +169,7 @@ next:
 		/* put it in the actual database */
 		db.arr[B->id] = *B;
 		/* the id is incremented inside create_book() */
+		memset(line, 0, sizeof(line));
 	}
 	fclose(fd);
 }
@@ -186,6 +195,9 @@ int main(int argc, const char **argv)
 	printf("[7] Display books\n");
 	printf("[8] Display books by surname search\n");
 	printf("[9] Exit\n");
+
+	printf("RANDOM: %s\n", db.arr[100].title);
+	printf("RANDOM: %s\n", db.arr[0].title);
 
 	/* main loop */
 	short opt;
