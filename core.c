@@ -58,7 +58,7 @@ int main(int argc, const char **argv)
 	if (argc >= 2)
 		strcpy(filename, argv[1]);
 	else
-		strcpy(filename, "datafile.db");
+		strcpy(filename, "datafile");
 
 	init_db(filename);
 

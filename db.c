@@ -143,6 +143,7 @@ void init_db(const char *file)
 		/* done. final work */
 		Book *B;
 		B = create_book(book_name, atoi(the_year), pub_name);
+
 		/* splitting names. (Multiple authors separated with commas) */
 		j = 0;  /* using `i` and `j` as indexes again to save memory */
 next:
@@ -200,10 +201,10 @@ void save_db(const char *file)
 	for (i=0; i < idSum; i++) {
 		/* concatenate the first and last name of every author */
 		n = db.arr[i].numberOfAuthors;
-		name = (char *)smalloc(sizeof(char) * 56 * 2 * n);
+		name = smalloc(sizeof(char) * 56 * 2 * n);
 		for (j=1; j <= n; j++) {
-			strncpy(name, db.arr[i].authors[j-1].first, 56);
-			strncpy(name, db.arr[i].authors[j-1].last,  56);
+			strcat(name, db.arr[i].authors[j-1].first);
+			strcat(name, db.arr[i].authors[j-1].last);
 		}
 		fprintf(fd, "%s;%s;%d;%s\n",
 					db.arr[i].title,
@@ -213,4 +214,3 @@ void save_db(const char *file)
 	}
 	fclose(fd);
 }
-
