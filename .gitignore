@@ -1,6 +1,7 @@
 *.swp
 *.o
-datafile.db
+datafile*
+file
 a.out
 base
 program

@@ -11,14 +11,19 @@ OPT=-O0
 FLAGS=-g
 
 # default target that compiles and runs
-all: books
+all: core db
+	$(CC) core.o db.o -o program
+	rm *.o
 	@./program
 
 # the compilation target
-books: books.c books.h
-	$(CC) $(WARN) $(OPT) $(FLAGS) books.c -o program
+core: core.c core.h
+	$(CC) $(WARN) $(OPT) $(FLAGS) -c core.c
+
+db: db.c
+	$(CC) $(WARN) $(OPT) $(FLAGS) -c db.c
 
 clean:
-	-@rm -f program a.out
+	-@rm -f program base a.out
 
 .PHONY: clean

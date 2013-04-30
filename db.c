@@ -1,21 +1,28 @@
 /**
- * George Papanikolaou 2013
- * Data structures project --- CEID
- * There is Absolutely NO Warranty.
+ * This file is part of the Data Structures project (CEID)
+ *
+ * Copyright 2013 George "papanikge" Papanikolaou
+ *
+ * This is experimental software. Beware of Dragons.
+ *
+ * This project is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with these files; If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "books.h"
+/* 
+ * Implementing the database actions such as file parsing and
+ * creating book structs
+ */
 
-/* global main in-memory dynamic database */
-Data db;
-/* for the individual ids of book structs */
-long idSum;
+#include "core.h"
 
 /* create and return a book struct */
-Book* create_book(char* name, short year, char* pub)
+static Book* create_book(char* name, short year, char* pub)
 {
 	Book *b = smalloc(sizeof(Book));
 	b->id = idSum;
@@ -29,7 +36,7 @@ Book* create_book(char* name, short year, char* pub)
 }
 
 /* dynamically change (and returns) the authors array in a given book struct */
-Author* add_author(Book* b, char* f, char* l)
+static Author* add_author(Book* b, char* f, char* l)
 {
 	Author *a;
 	unsigned int index = b->numberOfAuthors;
@@ -207,63 +214,3 @@ void save_db(const char *file)
 	fclose(fd);
 }
 
-int main(int argc, const char **argv)
-{
-	unsigned int opt;
-	/* handle data base file name */
-	char filename[50];
-	if (argc >= 2)
-		strcpy(filename, argv[1]);
-	else
-		strcpy(filename, "datafile.db");
-
-	init_db(filename);
-
-	printf("[1] Load books from file\n");
-	printf("[2] Save books to file\n");
-	printf("[3] Add a book\n");
-	printf("[4] Delete a book by id\n");
-	printf("[5] Display a book by id\n");
-	printf("[6] Display a book by title\n");
-	printf("[7] Display books\n");
-	printf("[8] Display books by surname search\n");
-	printf("[9] Exit\n");
-
-	/* main loop */
-	while ((opt = get_option()) != 9) {
-		switch (opt) {
-			case 1:
-				free(db.arr);
-				init_db(filename);
-				break;
-			case 2:
-				save_db(filename);
-				break;
-			case 3:
-				/* add a book */
-				break;
-			case 4:
-				/* remove a book */
-				break;
-			case 5:
-				/* search by id */
-				break;
-			case 6:
-				/* search by name */
-				break;
-			case 7:
-				/* display all */
-				break;
-			case 8:
-				/* search by last name of author */
-				break;
-			default:
-				fatal("get_option() returns something wrong");
-				break;
-		}
-	}
-
-	/* got exit command. save and quit */
-	save_db(filename);
-	return 0;
-}
