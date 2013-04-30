@@ -175,6 +175,38 @@ next:
 	fclose(fd);
 }
 
+/* write the dynamic db back to the provided file */
+void save_db(const char *file)
+{
+	FILE *fd;
+	long i;
+	int n;
+	int j;
+	char *name;
+
+	fd = fopen(file, "w");
+	if (!fd)
+		fatal("while opening data file for writing");
+	/* first we write the total number of books */
+	fprintf(fd, "%d\n", (int)idSum);
+	/* iterate over the db and add to file */
+	for (i=0; i < idSum; i++) {
+		/* concatenate the first and last name of every author */
+		n = db.arr[i].numberOfAuthors;
+		name = (char *)smalloc(sizeof(char) * 56 * 2 * n);
+		for (j=1; j <= n; j++) {
+			strncpy(name, db.arr[i].authors[j-1].first, 56);
+			strncpy(name, db.arr[i].authors[j-1].last,  56);
+		}
+		fprintf(fd, "%s;%s;%d;%s\n",
+					db.arr[i].title,
+					name,
+					db.arr[i].yearPublished,
+					db.arr[i].publisher);
+	}
+	fclose(fd);
+}
+
 int main(int argc, const char **argv)
 {
 	unsigned int opt;
@@ -201,10 +233,11 @@ int main(int argc, const char **argv)
 	while ((opt = get_option()) != 9) {
 		switch (opt) {
 			case 1:
-				/* init_db(filename); */
+				free(db.arr);
+				init_db(filename);
 				break;
 			case 2:
-				/* save_db(); */
+				save_db(filename);
 				break;
 			case 3:
 				/* add a book */
@@ -231,6 +264,6 @@ int main(int argc, const char **argv)
 	}
 
 	/* got exit command. save and quit */
-	/* save_db(); */
+	save_db(filename);
 	return 0;
 }
