@@ -28,11 +28,11 @@ Book* create_book(char* name, short year, char* pub)
 	return b;
 }
 
-/* dynamically change the authors array in a given book struct */
-void add_author(Book* b, char* f, char* l)
+/* dynamically change (and returns) the authors array in a given book struct */
+Author* add_author(Book* b, char* f, char* l)
 {
 	Author *a;
-	short index = b->numberOfAuthors;
+	unsigned int index = b->numberOfAuthors;
 	/* creating or reallocating the proper array */
 	if (index == 0) {
 		a = smalloc(sizeof(Author));
@@ -41,11 +41,11 @@ void add_author(Book* b, char* f, char* l)
 		if (!a) fatal("while reallocating to add author");
 	}
 	/* now add the names and point back */
-	a[index].first = f;
-	a[index].last  = l;
-	b->authors = a;
+	strncpy(a[index].first, f, 56);
+	strncpy(a[index].last,  l, 56);
 	/* increment the counter */
 	b->numberOfAuthors++;
+	return a;
 }
 
 /* load and initialize db from file first menu option function */
@@ -53,13 +53,13 @@ void init_db(const char *file)
 {
 	/* temp buffers and descriptors */
 	FILE *fd;
-	short i;   /* for the temp index */
-	short j;   /* for the line index */
-	char line[MAXENTRY];
+	unsigned int i;   /* for the temp index */
+	unsigned int j;   /* for the line index */
+	char line[256+56+56+4+40];
 	char book_name[256];
-	char writer[MAXAUTHOR];
-	char first_name[MAXAUTHOR];
-	char last_name[MAXAUTHOR];
+	char writer[56*2];
+	char first_name[56];
+	char last_name[56];
 	char the_year[4];
 	char pub_name[40];
 	idSum = 0;
@@ -71,11 +71,12 @@ void init_db(const char *file)
 		fatal("while reading data file");
 	long n = atol(line);
 	/* allocate the main database */
-	db.arr = smalloc(MAXENTRY*n);
+	db.arr = smalloc(sizeof(Book)*n);
 	db.numberOfBooks = n;
 	/* start parsing the file, delimiter is ';' */
 	memset(line, 0, sizeof(line));
-	while (fgets(line, MAXENTRY, fd) != NULL) {
+	printf("Loading file...\n");
+	while (fgets(line, sizeof(Book), fd) != NULL) {
 		/* erase the previous data */
 		memset(book_name, 0, sizeof(book_name));
 		memset(writer, 0, sizeof(writer));
@@ -99,7 +100,7 @@ void init_db(const char *file)
 		j++;
 		/* second the author */
 		i = 0;
-		while (line[j] != ';' && j < MAXAUTHOR) {
+		while (line[j] != ';' && j < (56*2)) {
 			if (line[j] == '"') {
 				j++;
 				continue;
@@ -143,7 +144,7 @@ next:
 		 * a goto label to save multiple nested while loops
 		 */
 		i = 0;
-		while (writer[j] != '\0' && writer[j] != ',' && writer[j] != ' ' && j < MAXAUTHOR) {
+		while (writer[j] != '\0' && writer[j] != ',' && writer[j] != ' ' && j < 56) {
 			first_name[i] = writer[j];
 			j++;
 			i++;
@@ -152,14 +153,14 @@ next:
 		if (writer[j] == ' ') {
 			i = 0;
 			j++;
-			while (writer[j] != '\0' && writer[j] != ',' && j < MAXAUTHOR) {
+			while (writer[j] != '\0' && writer[j] != ',' && j < 56) {
 				last_name[i] = writer[j];
 				j++;
 				i++;
 			}
 		}
 		/* add him */
-		add_author(B, first_name, last_name);
+		B->authors = add_author(B, first_name, last_name);
 		if (writer[j] == ',') {
 			/* with comma, we go for second author */
 			j++;
@@ -176,6 +177,7 @@ next:
 
 int main(int argc, const char **argv)
 {
+	unsigned int opt;
 	/* handle data base file name */
 	char filename[50];
 	if (argc >= 2)
@@ -183,7 +185,6 @@ int main(int argc, const char **argv)
 	else
 		strcpy(filename, "datafile.db");
 
-	printf("Loading file...\n");
 	init_db(filename);
 
 	printf("[1] Load books from file\n");
@@ -196,9 +197,7 @@ int main(int argc, const char **argv)
 	printf("[8] Display books by surname search\n");
 	printf("[9] Exit\n");
 
-
 	/* main loop */
-	short opt;
 	while ((opt = get_option()) != 9) {
 		switch (opt) {
 			case 1:

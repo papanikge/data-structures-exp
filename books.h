@@ -2,14 +2,10 @@
  * Books data structures CEID project header file
  */
 
-/* maximum sizes (included pointed strings) */
-#define MAXAUTHOR 100
-#define MAXENTRY (MAXAUTHOR + sizeof(Book))
-
 /* author type for names */
 typedef struct {
-	char *first;
-	char *last;
+	char first[56];
+	char last[56];
 } Author;
 
 /* a single unit type */
