@@ -62,6 +62,7 @@ void init_db(const char *file)
 	FILE *fd;
 	unsigned int i;   /* for the temp index */
 	unsigned int j;   /* for the line index */
+	unsigned int p;   /* previous */
 	char line[256+56+56+4+40];
 	char book_name[256];
 	char writer[56*2];
@@ -94,7 +95,7 @@ void init_db(const char *file)
 		j = 0;
 		/* first the name */
 		i = 0;
-		while (line[j] != ';' && j < 256) {
+		while (line[j] != ';' && j <= 256) {
 			/* don't wrap my strings in "" */
 			if (line[j] == '"') {
 				j++;
@@ -105,9 +106,10 @@ void init_db(const char *file)
 			j++;
 		}
 		j++;
+		p = j;
 		/* second the author */
 		i = 0;
-		while (line[j] != ';' && j < (56*2)) {
+		while (line[j] != ';' && j <= p+(56*2)) {
 			if (line[j] == '"') {
 				j++;
 				continue;
@@ -117,9 +119,10 @@ void init_db(const char *file)
 			j++;
 		}
 		j++;
+		p = j;
 		/* next the year */
 		i = 0;
-		while (line[j] != ';' && j < 4) {
+		while (line[j] != ';' && j <= p+4) {
 			if (line[j] == '"') {
 				j++;
 				continue;
@@ -129,10 +132,11 @@ void init_db(const char *file)
 			j++;
 		}
 		j++;
+		p = j;
 		/* and last one is the publisher */
 		i = 0;
-		while (line[j] != '\n' && j < 40) {
-			if (line[j] == '"') {
+		while (line[j] != '\n' && j <= p+40) {
+			if (line[j] == '"' || line[j] == ';') {
 				j++;
 				continue;
 			}
@@ -161,7 +165,7 @@ next:
 		if (writer[j] == ' ') {
 			i = 0;
 			j++;
-			while (writer[j] != '\0' && writer[j] != ',' && j < 56) {
+			while (writer[j] != '\0' && writer[j] != ',') {
 				last_name[i] = writer[j];
 				j++;
 				i++;
