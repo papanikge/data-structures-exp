@@ -21,6 +21,17 @@
 
 #include "core.h"
 
+/* 
+ * Chop trailing newline from a string
+ * We're wasting a char this way, but it's faster
+ */
+static void chomp(char* s)
+{
+	int end = strlen(s) - 1;
+	if (end >= 0 && s[end] == '\n') 
+		s[end] = '\0';
+}
+
 /* create and return a book struct */
 static Book* create_book(char* name, short year, char* pub)
 {
