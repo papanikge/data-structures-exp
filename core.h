@@ -38,7 +38,8 @@ extern Data db;
 /* for the individual ids of book structs */
 extern long idSum;
 
-void init_db(const char *file);
-void save_db(const char *file);
 inline void fatal(char *message);
 void* smalloc(const unsigned int size);
+void init_db(const char *file);
+void save_db(const char *file);
+void user_add_book(void);

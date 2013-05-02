@@ -229,3 +229,47 @@ void save_db(const char *file)
 	}
 	fclose(fd);
 }
+
+/* resize the db and add a book struct with user input */
+void user_add_book(void)
+{
+	Data *D;
+	Book *B;
+	char title[256];
+	char name[112];
+	char year[4];
+	char pub[40];
+	long size = sizeof(db.arr) + sizeof(Book);
+
+	/* get user input */
+	printf("Title of the Book? ");
+	if (! fgets(title, 256, stdin))
+		goto error;
+	chomp(title);
+	printf("Author? ");
+	if (! fgets(name, 112, stdin))
+		goto error;
+	chomp(name);
+	printf("When was it published? ");
+	if (! fgets(year, 4, stdin))
+		goto error;
+	chomp(year);
+	printf("Publisher company? ");
+	if (! fgets(pub, 40, stdin))
+		goto error;
+	chomp(pub);
+
+	D = realloc(db.arr, size);
+	if (!D) fatal("while reallocating the db to add a struct");
+	/* now add the book at the end */
+	B = create_book(title, atoi(year), pub);
+	B->authors = add_author(B, fst, lst);
+	db.arr[idSum] = *B;
+	/* XXX perhaps is idSum-1. Attention */
+	printf("Book node added to database [id: %d]\n", B->id);
+	return;
+
+error:
+	printf("Book creation aborted\n");
+	return;
+}

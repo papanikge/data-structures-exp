@@ -83,7 +83,7 @@ int main(int argc, const char **argv)
 				save_db(filename);
 				break;
 			case 3:
-				/* add a book */
+				user_add_book();
 				break;
 			case 4:
 				/* remove a book */
