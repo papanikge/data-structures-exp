@@ -28,15 +28,13 @@ typedef struct {
 /* the wrapper around the dynamic array of the managed books */
 typedef struct {
 	Book  *arr;
-	long  numberOfBooks;
+	unsigned long  numberOfBooks;
 } Data;
 
 /******* Global function prototypes *******/
 
 /* global main in-memory dynamic database */
 extern Data db;
-/* for the individual ids of book structs */
-extern long idSum;
 
 inline void fatal(char *message);
 void* smalloc(const unsigned int size);

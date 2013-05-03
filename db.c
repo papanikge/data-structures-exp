@@ -37,9 +37,14 @@ static void split_names(char* whole, char* first, char* last)
 {
 	int i;
 	int j;
-	for (i=0; whole[i] != ' '; i++)
+	for (i=0; whole[i] != ' ' && whole[i] != '\0'; i++)
 		first[i] = whole[i];
-	i++;
+
+	if (whole[i] == ' ')
+		i++;
+	else
+		return;
+
 	for (j=0; whole[i] != '\0'; j++) {
 		last[j] = whole[i];
 		i++;
@@ -50,8 +55,7 @@ static void split_names(char* whole, char* first, char* last)
 static Book* create_book(char* name, short year, char* pub)
 {
 	Book *b = smalloc(sizeof(Book));
-	b->id = idSum;
-	idSum++;
+	b->id = db.numberOfBooks;
 	/* the rest */
 	strcpy(b->title, name);
 	strcpy(b->publisher, pub);
@@ -95,17 +99,20 @@ void init_db(const char *file)
 	char last_name[56];
 	char the_year[4];
 	char pub_name[40];
-	idSum = 0;
+
 	fd = fopen(file, "r");
 	if (!fd)
 		fatal("while opening data file");
 	/* get the total number of books */
 	if (!fgets(line, 8, fd))
 		fatal("while reading data file");
+
 	long n = atol(line);
+	if (!n)
+		fatal("no sum of books at the first line");
 	/* allocate the main database */
 	db.arr = smalloc(sizeof(Book)*n);
-	db.numberOfBooks = n;
+	db.numberOfBooks = 0;
 	/* start parsing the file, delimiter is ';' */
 	memset(line, 0, sizeof(line));
 	printf("Loading file...\n");
@@ -206,8 +213,8 @@ next:
 		}
 
 		/* put it in the actual database */
-		/* the id is incremented inside create_book() */
 		db.arr[B->id] = *B;
+		db.numberOfBooks++;
 		memset(line, 0, sizeof(line));
 	}
 	fclose(fd);
@@ -217,7 +224,7 @@ next:
 void save_db(const char *file)
 {
 	FILE *fd;
-	long i;
+	unsigned long i;
 	int n;
 	int j;
 	char *name;
@@ -226,9 +233,9 @@ void save_db(const char *file)
 	if (!fd)
 		fatal("while opening data file for writing");
 	/* first we write the total number of books */
-	fprintf(fd, "%d\n", (int)idSum);
+	fprintf(fd, "%lu\n", db.numberOfBooks);
 	/* iterate over the db and add to file */
-	for (i=0; i < idSum; i++) {
+	for (i=0; i < db.numberOfBooks; i++) {
 		/* concatenate the first and last name of every author */
 		n = db.arr[i].numberOfAuthors;
 		name = smalloc(sizeof(char) * 56 * 2 * n);
@@ -253,6 +260,8 @@ void user_add_book(void)
 	Book *B;
 	char title[256];
 	char name[112];
+	char fst[112];
+	char snd[112];
 	char year[4];
 	char pub[40];
 	long size = sizeof(db.arr) + sizeof(Book);
@@ -282,9 +291,9 @@ void user_add_book(void)
 
 	split_names(name, fst, snd);
 	B->authors = create_author(B, fst, snd);
-	db.arr[idSum] = *B;
-	/* XXX perhaps is idSum-1. Attention */
-	printf("Book node added to database [id: %d]\n", B->id);
+	db.arr[db.numberOfBooks] = *B;
+	db.numberOfBooks++;
+	printf("Book node added to database [id: %ld]\n", B->id);
 	return;
 
 error:

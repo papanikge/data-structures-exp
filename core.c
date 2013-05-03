@@ -18,8 +18,6 @@
 
 /* global main in-memory dynamic database */
 Data db;
-/* for the individual ids of book structs */
-long idSum;
 
 /* panic function for fatal errors */
 inline void fatal(char *message)
