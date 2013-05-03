@@ -241,6 +241,7 @@ void save_db(const char *file)
 					name,
 					db.arr[i].yearPublished,
 					db.arr[i].publisher);
+		free(name);
 	}
 	fclose(fd);
 }
