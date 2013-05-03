@@ -32,6 +32,20 @@ static void chomp(char* s)
 		s[end] = '\0';
 }
 
+/* split a char array to space, so we can get first and last name */
+static void split_names(char* whole, char* first, char* last)
+{
+	int i;
+	int j;
+	for (i=0; whole[i] != ' '; i++)
+		first[i] = whole[i];
+	i++;
+	for (j=0; whole[i] != '\0'; j++) {
+		last[j] = whole[i];
+		i++;
+	}
+}
+
 /* create and return a book struct */
 static Book* create_book(char* name, short year, char* pub)
 {
@@ -165,6 +179,7 @@ next:
 		/**
 		 * this is the entry point for every author loop, implemented with
 		 * a goto label to save multiple nested while loops
+		 * ?? use split_names() here ??
 		 */
 		i = 0;
 		while (writer[j] != '\0' && writer[j] != ',' && writer[j] != ' ' && j < 56) {
@@ -263,7 +278,9 @@ void user_add_book(void)
 	if (!D) fatal("while reallocating the db to add a struct");
 	/* now add the book at the end */
 	B = create_book(title, atoi(year), pub);
-	B->authors = create_author(B, fst, lst);
+
+	split_names(name, fst, snd);
+	B->authors = create_author(B, fst, snd);
 	db.arr[idSum] = *B;
 	/* XXX perhaps is idSum-1. Attention */
 	printf("Book node added to database [id: %d]\n", B->id);
