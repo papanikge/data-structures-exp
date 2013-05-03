@@ -47,7 +47,7 @@ static Book* create_book(char* name, short year, char* pub)
 }
 
 /* dynamically change (and returns) the authors array in a given book struct */
-static Author* add_author(Book* b, char* f, char* l)
+static Author* create_author(Book* b, char* f, char* l)
 {
 	Author *a;
 	unsigned int index = b->numberOfAuthors;
@@ -183,7 +183,7 @@ next:
 			}
 		}
 		/* add him */
-		B->authors = add_author(B, first_name, last_name);
+		B->authors = create_author(B, first_name, last_name);
 		if (writer[j] == ',') {
 			/* with comma, we go for second author */
 			j++;
@@ -263,7 +263,7 @@ void user_add_book(void)
 	if (!D) fatal("while reallocating the db to add a struct");
 	/* now add the book at the end */
 	B = create_book(title, atoi(year), pub);
-	B->authors = add_author(B, fst, lst);
+	B->authors = create_author(B, fst, lst);
 	db.arr[idSum] = *B;
 	/* XXX perhaps is idSum-1. Attention */
 	printf("Book node added to database [id: %d]\n", B->id);
