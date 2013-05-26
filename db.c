@@ -89,7 +89,9 @@ void init_db(const char *file)
 {
 	/* temp buffers and descriptors */
 	FILE *fd;
-	int pos;
+	unsigned int i,s;
+	unsigned int next_comma;
+	unsigned int next_space;
 	char line[256+56+56+4+40];
 	char book_name[256];
 	char writer[56*2];
@@ -125,7 +127,7 @@ void init_db(const char *file)
 		memset(pub_name, 0, sizeof(pub_name));
 
 		/* scanf is like magic */
-		sscanf(line, "\"%[0-9a-zA-Z.:!'?,)( ]\";\"%[0-9a-zA-Z.:',!?)( ]\";\"%[0-9a-zA-Z.:!',?)( ]\";\"%[0-9a-zA-Z.:'!,?)( ]\"",
+		sscanf(line, "\"%[0-9a-zA-Z.:!'?,)( ]\";\"%[0-9a-zA-Z.:',!?)( ]\";\"%[0-9]\";\"%[0-9a-zA-Z.:'!,?)( ]\"",
 						book_name, writer, the_year, pub_name);
 
 		/* the symbols in the scanf sequence are the only ones we accept to
@@ -136,21 +138,36 @@ void init_db(const char *file)
 			memset(line, 0, sizeof(line));
 			continue;
 		}
+		/* set defaults here */
+		if (strlen(the_year) == 0)
+			strcpy(the_year, "0000");
 
 		/* done. creating... */
 		Book *B;
 		B = create_book(book_name, atoi(the_year), pub_name);
 
-		/* splitting into first and last name */
-		pos = strcspn(writer, " ");
-		strncpy(first_name, writer, pos);
-		strcpy(last_name, writer+pos);
-		/* now there is probably a space prefixed */
-		if (last_name[0] == ' ')
-			memmove(last_name, last_name+1, strlen(last_name));
-
-		/* add him */
-		B->authors = create_author(B, first_name, last_name);
+		/* splitting into different authors and first and last names */
+		next_comma = strcspn(writer, ",");
+		while (next_comma == strlen(writer)) {
+			next_space = strcspn(writer, " ");
+			if (next_space > next_comma) {
+				strncpy(first_name, writer, next_comma);
+				strcpy(last_name, " ");
+			} else {
+				strncpy(first_name, writer, next_space);
+				strncpy(last_name , writer+next_space, next_comma);
+				/* now there is probably a space prefixed */
+				if (last_name[0] == ' ')
+					memmove(last_name, last_name+1, strlen(last_name));
+			}
+			/* add him */
+			B->authors = create_author(B, first_name, last_name);
+			/* preparing the array for the next one, first find the size */
+			s = 0;
+			for (i = 0; writer[i+next_comma] == '\0'; i++) s++;
+			/* and then move */
+			memmove(writer, writer+next_comma, s);
+		}
 
 		/* put it in the actual database */
 		db.arr[B->id] = *B;
