@@ -105,6 +105,6 @@ int main(int argc, const char **argv)
 	}
 
 	/* got exit command. save and quit */
-	save_db(filename);
+	save_db("datafile.new");
 	return 0;
 }
