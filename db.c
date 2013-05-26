@@ -89,9 +89,7 @@ void init_db(const char *file)
 {
 	/* temp buffers and descriptors */
 	FILE *fd;
-	unsigned int i;   /* for the temp index */
-	unsigned int j;   /* for the line index */
-	unsigned int p;   /* previous */
+	int pos;
 	char line[256+56+56+4+40];
 	char book_name[256];
 	char writer[56*2];
@@ -117,6 +115,7 @@ void init_db(const char *file)
 	memset(line, 0, sizeof(line));
 	printf("Loading file...\n");
 	while (fgets(line, sizeof(Book), fd) != NULL) {
+
 		/* erase the previous data */
 		memset(book_name, 0, sizeof(book_name));
 		memset(writer, 0, sizeof(writer));
@@ -124,93 +123,25 @@ void init_db(const char *file)
 		memset(last_name, 0, sizeof(last_name));
 		memset(the_year, 0, sizeof(the_year));
 		memset(pub_name, 0, sizeof(pub_name));
-		j = 0;
-		/* first the name */
-		i = 0;
-		while (line[j] != ';' && j <= 256) {
-			/* don't wrap my strings in "" */
-			if (line[j] == '"') {
-				j++;
-				continue;
-			}
-			book_name[i] = line[j];
-			i++;
-			j++;
-		}
-		j++;
-		p = j;
-		/* second the author */
-		i = 0;
-		while (line[j] != ';' && j <= p+(56*2)) {
-			if (line[j] == '"') {
-				j++;
-				continue;
-			}
-			writer[i] = line[j];
-			i++;
-			j++;
-		}
-		j++;
-		p = j;
-		/* next the year */
-		i = 0;
-		while (line[j] != ';' && j <= p+4) {
-			if (line[j] == '"') {
-				j++;
-				continue;
-			}
-			the_year[i] = line[j];
-			i++;
-			j++;
-		}
-		j++;
-		p = j;
-		/* and last one is the publisher */
-		i = 0;
-		while (line[j] != '\n' && j <= p+40) {
-			if (line[j] == '"' || line[j] == ';') {
-				j++;
-				continue;
-			}
-			pub_name[i] = line[j];
-			i++;
-			j++;
-		}
-		/* done. final work */
+
+		/* scanf is like magic */
+		sscanf(line, "\"%[0-9a-zA-Z. ]\";\"%[0-9a-zA-Z. ]\";\"%[0-9a-zA-Z. ]\";\"%[0-9a-zA-Z. ]\"",
+						book_name, writer, the_year, pub_name);
+
+		/* done. creating... */
 		Book *B;
 		B = create_book(book_name, atoi(the_year), pub_name);
 
-		/* splitting names. (Multiple authors separated with commas) */
-		j = 0;  /* using `i` and `j` as indexes again to save memory */
-next:
-		/**
-		 * this is the entry point for every author loop, implemented with
-		 * a goto label to save multiple nested while loops
-		 * ?? use split_names() here ??
-		 */
-		i = 0;
-		while (writer[j] != '\0' && writer[j] != ',' && writer[j] != ' ' && j < 56) {
-			first_name[i] = writer[j];
-			j++;
-			i++;
-		}
-		/* if we got a space, we go for last name */
-		if (writer[j] == ' ') {
-			i = 0;
-			j++;
-			while (writer[j] != '\0' && writer[j] != ',') {
-				last_name[i] = writer[j];
-				j++;
-				i++;
-			}
-		}
+		/* splitting into first and last name */
+		pos = strcspn(writer, " ");
+		strncpy(first_name, writer, pos);
+		strcpy(last_name, writer+pos);
+		/* now there is probably a space prefixed */
+		if (last_name[0] == ' ')
+			memmove(last_name, last_name+1, strlen(last_name));
+
 		/* add him */
 		B->authors = create_author(B, first_name, last_name);
-		if (writer[j] == ',') {
-			/* with comma, we go for second author */
-			j++;
-			goto next;
-		}
 
 		/* put it in the actual database */
 		db.arr[B->id] = *B;
