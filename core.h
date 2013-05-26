@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-/******* Base Structs *******/
+/******************************* Base Structs ********************************/
 
 /* author type for names */
 typedef struct {
@@ -31,7 +31,7 @@ typedef struct {
 	unsigned long  numberOfBooks;
 } Data;
 
-/******* Global function prototypes *******/
+/*********************** Global function prototypes **************************/
 
 /* global main in-memory dynamic database */
 extern Data db;
