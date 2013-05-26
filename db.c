@@ -229,7 +229,6 @@ void save_db(const char *file)
 	int j;
 	int size;
 	char *name;
-	char *tmp;
 
 	fd = fopen(file, "w");
 	if (!fd)
@@ -240,7 +239,7 @@ void save_db(const char *file)
 	size = sizeof(char) * 56 * 2;
 	name = smalloc(size);
 	/* iterate over the db and add to file */
-	for (i=0; i < db.numberOfBooks; i++) {
+	for (i=0; (unsigned long)i < db.numberOfBooks; i++) {
 		n = db.arr[i].numberOfAuthors;
 		if (n > 1) {
 			printf("%d and %d\n", i, n);
@@ -270,40 +269,52 @@ void user_add_book(void)
 {
 	Data *D;
 	Book *B;
-	char title[256];
+	int tmp;
+	char title[257];
 	char name[112];
 	char fst[112];
 	char snd[112];
-	char year[4];
-	char pub[40];
-	long size = sizeof(db.arr) + sizeof(Book);
+	char year[5];
+	char pub[41];
+	long size = (db.numberOfBooks + 1) * sizeof(Book);
 
 	/* get user input */
-	printf("Title of the Book? ");
-	if (! fgets(title, 256, stdin))
+	fprintf(stdout, "Title of the Book? ");
+	/* sometimes there is a trailing newline around and we need to consume it*/
+	tmp = fgetc(stdin);
+	if (tmp != '\n')
+		ungetc(tmp, stdin);
+	if (! fgets(title, sizeof(title), stdin))
+		/* checking for error */
 		goto error;
 	chomp(title);
+
 	printf("Author? ");
-	if (! fgets(name, 112, stdin))
+	if (! fgets(name, sizeof(name), stdin))
 		goto error;
 	chomp(name);
+
 	printf("When was it published? ");
-	if (! fgets(year, 4, stdin))
+	if (! fgets(year, sizeof(year), stdin))
 		goto error;
 	chomp(year);
+	/* XXX: maybe assert that this is 4 numbers */
 	printf("Publisher company? ");
-	if (! fgets(pub, 40, stdin))
+	if (! fgets(pub, sizeof(pub), stdin))
 		goto error;
 	chomp(pub);
 
+	/* make it bigger */
 	D = realloc(db.arr, size);
 	if (!D) fatal("while reallocating the db to add a struct");
-	/* now add the book at the end */
 	B = create_book(title, atoi(year), pub);
 
+	/* take care of the authors */
 	split_names(name, fst, snd);
 	B->authors = create_author(B, fst, snd);
-	db.arr[db.numberOfBooks] = *B;
+
+	/* now add the book at the end */
+	db.arr[db.numberOfBooks - 1] = *B;
 	db.numberOfBooks++;
 	printf("Book node added to database [id: %ld]\n", B->id);
 	return;
