@@ -125,8 +125,17 @@ void init_db(const char *file)
 		memset(pub_name, 0, sizeof(pub_name));
 
 		/* scanf is like magic */
-		sscanf(line, "\"%[0-9a-zA-Z. ]\";\"%[0-9a-zA-Z. ]\";\"%[0-9a-zA-Z. ]\";\"%[0-9a-zA-Z. ]\"",
+		sscanf(line, "\"%[0-9a-zA-Z.:!'?,)( ]\";\"%[0-9a-zA-Z.:',!?)( ]\";\"%[0-9a-zA-Z.:!',?)( ]\";\"%[0-9a-zA-Z.:'!,?)( ]\"",
 						book_name, writer, the_year, pub_name);
+
+		/* the symbols in the scanf sequence are the only ones we accept to
+		 * be in the strings and we don't want any weird stuff because they
+		 * break the encoding, so we're dropping any books that apper to have
+		 * no authors */
+		if (strlen(writer) == 0) {
+			memset(line, 0, sizeof(line));
+			continue;
+		}
 
 		/* done. creating... */
 		Book *B;
