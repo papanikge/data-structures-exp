@@ -224,32 +224,44 @@ next:
 void save_db(const char *file)
 {
 	FILE *fd;
-	unsigned long i;
+	int i;
 	int n;
 	int j;
+	int size;
 	char *name;
+	char *tmp;
 
 	fd = fopen(file, "w");
 	if (!fd)
 		fatal("while opening data file for writing");
 	/* first we write the total number of books */
-	fprintf(fd, "%lu\n", db.numberOfBooks);
+	fprintf(fd, "%lu\n", db.numberOfBooks - 1);
+	/* allocate memory for one and reallocate accordingly */
+	size = sizeof(char) * 56 * 2;
+	name = smalloc(size);
 	/* iterate over the db and add to file */
 	for (i=0; i < db.numberOfBooks; i++) {
-		/* concatenate the first and last name of every author */
 		n = db.arr[i].numberOfAuthors;
-		name = smalloc(sizeof(char) * 56 * 2 * n);
+		if (n > 1) {
+			printf("%d and %d\n", i, n);
+			name = realloc(name, size * n);
+		}
+		/* concatenate the first and last name of every author */
 		for (j=1; j <= n; j++) {
 			strcat(name, db.arr[i].authors[j-1].first);
+			strcat(name, " ");
 			strcat(name, db.arr[i].authors[j-1].last);
+			if (n > 1 && j < n)
+				strcat(name, ",");
 		}
 		fprintf(fd, "%s;%s;%d;%s\n",
 					db.arr[i].title,
 					name,
 					db.arr[i].yearPublished,
 					db.arr[i].publisher);
-		free(name);
+		memset(name, 0, sizeof(size * n));
 	}
+	free(name);
 	fclose(fd);
 }
 
