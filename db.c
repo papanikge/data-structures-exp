@@ -36,7 +36,7 @@ static void chomp(char* s)
 static unsigned int count_char(char* str, const char c)
 {
 	int i;
-	unsigned int count;
+	unsigned int count = 0;
 	for (i = 0; str[i] != '\0'; i++)
 		if (str[i] == c) count++;
 	return count;
@@ -159,6 +159,10 @@ void init_db(const char *file)
 		} else {
 			while (count_char(writer, ',') != 0) {
 				next_space = strcspn(writer, " ");
+				/* clear */
+				memset(first_name, 0, sizeof(first_name));
+				memset(last_name, 0, sizeof(last_name));
+
 				if (next_space > next_comma) {
 					/* unlikely but the comma can come before a space */
 					strncpy(first_name, writer, next_comma);
@@ -166,7 +170,7 @@ void init_db(const char *file)
 				} else {
 					/* not using split_names() in here due to multiples */
 					strncpy(first_name, writer, next_space);
-					strncpy(last_name, writer + next_space + 1, next_comma);
+					strncpy(last_name, writer + next_space + 1, next_comma - next_space - 1);
 				}
 
 				/* add him to the db... */
@@ -176,15 +180,14 @@ void init_db(const char *file)
 				 * so the next iteration would work.
 				 * First find the lenght of the interesting area */
 				s = 0;
-				for (i = 0; writer[i+next_comma] != '\0'; i++)
+				for (i = 0; writer[i+next_comma+1] != '\0'; i++)
 					s++;
 				if (s == 0)
 					break;
+				/* and finally... */
 				memmove(writer, writer + next_comma + 1, s);
-				/* and finally */
+				memset(writer + s, 0, sizeof(writer)-s);
 				next_comma = strcspn(writer, ",");
-				memset(first_name, 0, sizeof(first_name));
-				memset(last_name, 0, sizeof(last_name));
 			}
 		}
 
