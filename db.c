@@ -221,7 +221,7 @@ void save_db(const char *file)
 	for (i=0; (unsigned long)i < db.numberOfBooks; i++) {
 		n = db.arr[i].numberOfAuthors;
 		if (n > 1) {
-			printf("%d and %d\n", i, n);
+			/* reallocating here in case of multiple authors */
 			name = realloc(name, size * n);
 		}
 		/* concatenate the first and last name of every author */
