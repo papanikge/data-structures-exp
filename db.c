@@ -150,25 +150,42 @@ void init_db(const char *file)
 
 		/* splitting into different authors and first and last names */
 		next_comma = strcspn(writer, ",");
-		while (next_comma == strlen(writer)) {
-			next_space = strcspn(writer, " ");
-			if (next_space > next_comma) {
-				strncpy(first_name, writer, next_comma);
-				strcpy(last_name, " ");
-			} else {
-				strncpy(first_name, writer, next_space);
-				strncpy(last_name , writer+next_space, next_comma);
-				/* now there is probably a space prefixed */
-				if (last_name[0] == ' ')
-					memmove(last_name, last_name+1, strlen(last_name));
-			}
+		if (next_comma == strlen(writer)) {
+			/* this means there is no comma, so only one author */
+			split_names(writer, first_name, last_name);
+
 			/* add him */
 			B->authors = create_author(B, first_name, last_name);
-			/* preparing the array for the next one, first find the size */
-			s = 0;
-			for (i = 0; writer[i+next_comma] == '\0'; i++) s++;
-			/* and then move */
-			memmove(writer, writer+next_comma, s);
+		} else {
+			while (count_char(writer, ',') != 0) {
+				next_space = strcspn(writer, " ");
+				if (next_space > next_comma) {
+					/* unlikely but the comma can come before a space */
+					strncpy(first_name, writer, next_comma);
+					strcpy(last_name, " ");
+				} else {
+					/* not using split_names() in here due to multiples */
+					strncpy(first_name, writer, next_space);
+					strncpy(last_name, writer + next_space + 1, next_comma);
+				}
+
+				/* add him to the db... */
+				B->authors = create_author(B, first_name, last_name);
+
+				/* we need to remove everything before the working comma
+				 * so the next iteration would work.
+				 * First find the lenght of the interesting area */
+				s = 0;
+				for (i = 0; writer[i+next_comma] != '\0'; i++)
+					s++;
+				if (s == 0)
+					break;
+				memmove(writer, writer + next_comma + 1, s);
+				/* and finally */
+				next_comma = strcspn(writer, ",");
+				memset(first_name, 0, sizeof(first_name));
+				memset(last_name, 0, sizeof(last_name));
+			}
 		}
 
 		/* put it in the actual database */
