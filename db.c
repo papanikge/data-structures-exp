@@ -22,7 +22,7 @@
 #include "core.h"
 
 /* 
- * Chop trailing newline from a string
+ * Chop trailing newline from a string inplace.
  * We're wasting a char this way, but it's faster
  */
 static void chomp(char* s)
