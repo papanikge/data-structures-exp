@@ -32,23 +32,25 @@ static void chomp(char* s)
 		s[end] = '\0';
 }
 
-/* split a char array to space, so we can get first and last name */
-static void split_names(char* whole, char* first, char* last)
+/* Count the specified character inside the given string */
+static unsigned int count_char(char* str, const char c)
 {
 	int i;
-	int j;
-	for (i=0; whole[i] != ' ' && whole[i] != '\0'; i++)
-		first[i] = whole[i];
+	unsigned int count;
+	for (i = 0; str[i] != '\0'; i++)
+		if (str[i] == c) count++;
+	return count;
+}
 
-	if (whole[i] == ' ')
-		i++;
-	else
-		return;
-
-	for (j=0; whole[i] != '\0'; j++) {
-		last[j] = whole[i];
-		i++;
-	}
+/* Split a char array to space, so we can get first and last name */
+static void split_names(char* whole, char* first, char* last)
+{
+	unsigned int next_space = strcspn(whole, " ");
+	strncpy(first, whole, next_space);
+	strncpy(last , whole + next_space + 1, strlen(whole));
+	/* now there is probably a space prefixed */
+	if (last[0] == ' ')
+		memmove(last, last + 1, strlen(last));
 }
 
 /* create and return a book struct */
