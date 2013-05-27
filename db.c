@@ -210,7 +210,7 @@ void save_db(const char *file)
 	if (!fd)
 		fatal("while opening data file for writing");
 	/* first we write the total number of books */
-	fprintf(fd, "%lu\n", db.numberOfBooks - 1);
+	fprintf(fd, "%lu\n", db.numberOfBooks);
 	/* allocate memory for one and reallocate accordingly */
 	size = sizeof(char) * 56 * 2;
 	name = smalloc(size);
@@ -229,7 +229,7 @@ void save_db(const char *file)
 			if (n > 1 && j < n)
 				strcat(name, ",");
 		}
-		fprintf(fd, "%s;%s;%d;%s\n",
+		fprintf(fd, "\"%s\";\"%s\";\"%d\";\"%s\"\n",
 					db.arr[i].title,
 					name,
 					db.arr[i].yearPublished,
