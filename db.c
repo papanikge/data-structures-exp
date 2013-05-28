@@ -217,6 +217,7 @@ void save_db(const char *file)
 	/* allocate memory for one and reallocate accordingly */
 	size = sizeof(char) * 56 * 2;
 	name = smalloc(size);
+	memset(name, 0, size);
 	/* iterate over the db and add to file */
 	for (i=0; (unsigned long)i < db.numberOfBooks; i++) {
 		n = db.arr[i].numberOfAuthors;
@@ -227,8 +228,10 @@ void save_db(const char *file)
 		/* concatenate the first and last name of every author */
 		for (j=1; j <= n; j++) {
 			strcat(name, db.arr[i].authors[j-1].first);
-			strcat(name, " ");
-			strcat(name, db.arr[i].authors[j-1].last);
+			if (db.arr[i].authors[j-1].last[0] != '\0') {
+				strcat(name, " ");
+				strcat(name, db.arr[i].authors[j-1].last);
+			}
 			if (n > 1 && j < n)
 				strcat(name, ",");
 		}
@@ -246,14 +249,14 @@ void save_db(const char *file)
 /* resize the db and add a book struct with user input */
 void user_add_book(void)
 {
-	Data *D;
-	Book *B;
+	Book* B;
+	Book* D;
 	int tmp;
 	char title[257];
 	char name[112];
 	char fst[112];
 	char snd[112];
-	char year[5];
+	char year[6];
 	char pub[41];
 	long size = (db.numberOfBooks + 1) * sizeof(Book);
 
@@ -263,13 +266,14 @@ void user_add_book(void)
 	tmp = fgetc(stdin);
 	if (tmp != '\n')
 		ungetc(tmp, stdin);
-	if (! fgets(title, sizeof(title), stdin))
+
+	if (! fgets(title, sizeof(title) - 1, stdin))
 		/* checking for error */
 		goto error;
 	chomp(title);
 
 	printf("Author? ");
-	if (! fgets(name, sizeof(name), stdin))
+	if (! fgets(name, sizeof(name) - 1, stdin))
 		goto error;
 	chomp(name);
 
@@ -279,13 +283,15 @@ void user_add_book(void)
 	chomp(year);
 	/* XXX: maybe assert that this is 4 numbers */
 	printf("Publisher company? ");
-	if (! fgets(pub, sizeof(pub), stdin))
+	if (! fgets(pub, sizeof(pub) - 1, stdin))
 		goto error;
 	chomp(pub);
 
 	/* make it bigger */
 	D = realloc(db.arr, size);
 	if (!D) fatal("while reallocating the db to add a struct");
+	db.arr = D;
+
 	B = create_book(title, atoi(year), pub);
 
 	/* take care of the authors */
@@ -293,7 +299,7 @@ void user_add_book(void)
 	B->authors = create_author(B, fst, snd);
 
 	/* now add the book at the end */
-	db.arr[db.numberOfBooks - 1] = *B;
+	db.arr[db.numberOfBooks] = *B;
 	db.numberOfBooks++;
 	printf("Book node added to database [id: %ld]\n", B->id);
 	return;
