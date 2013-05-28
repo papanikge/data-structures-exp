@@ -17,7 +17,7 @@ typedef struct {
 /* a single unit type */
 /* more than one author possible */
 typedef struct {
-	long   id;
+	char   id[11];
 	char   title[256];
 	char   publisher[40];
 	short  yearPublished;

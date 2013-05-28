@@ -54,11 +54,10 @@ static void split_names(char* whole, char* first, char* last)
 }
 
 /* create and return a book struct */
-static Book* create_book(char* name, short year, char* pub)
+static Book* create_book(char* given_id, char* name, short year, char* pub)
 {
 	Book *b = smalloc(sizeof(Book));
-	b->id = db.numberOfBooks;
-	/* the rest */
+	strcpy(b->id, given_id);
 	strcpy(b->title, name);
 	strcpy(b->publisher, pub);
 	b->yearPublished = year;
@@ -94,6 +93,7 @@ void init_db(const char *file)
 	unsigned int i,s;
 	unsigned int next_comma;
 	unsigned int next_space;
+	char given_id[10];
 	char line[256+56+56+4+40];
 	char book_name[256];
 	char writer[56*2];
@@ -121,6 +121,7 @@ void init_db(const char *file)
 	while (fgets(line, sizeof(Book), fd) != NULL) {
 
 		/* erase the previous data */
+		memset(given_id, 0, sizeof(given_id));
 		memset(book_name, 0, sizeof(book_name));
 		memset(writer, 0, sizeof(writer));
 		memset(first_name, 0, sizeof(first_name));
@@ -129,8 +130,8 @@ void init_db(const char *file)
 		memset(pub_name, 0, sizeof(pub_name));
 
 		/* scanf is like magic */
-		sscanf(line, "\"%[0-9a-zA-Z.:!'?,)( ]\";\"%[0-9a-zA-Z.:',!?)( ]\";\"%[0-9]\";\"%[0-9a-zA-Z.:'!,?)( ]\"",
-						book_name, writer, the_year, pub_name);
+		sscanf(line, "\"%[0-9]\";\"%[0-9a-zA-Z.:!'?,)( ]\";\"%[0-9a-zA-Z.:',!?)( ]\";\"%[0-9]\";\"%[0-9a-zA-Z.:'!,?)( ]\"",
+						given_id, book_name, writer, the_year, pub_name);
 
 		/* the symbols in the scanf sequence are the only ones we accept to
 		 * be in the strings and we don't want any weird stuff because they
@@ -146,7 +147,7 @@ void init_db(const char *file)
 
 		/* done. creating... */
 		Book *B;
-		B = create_book(book_name, atoi(the_year), pub_name);
+		B = create_book(given_id, book_name, atoi(the_year), pub_name);
 
 		/* splitting into different authors and first and last names */
 		next_comma = strcspn(writer, ",");
@@ -192,7 +193,7 @@ void init_db(const char *file)
 		}
 
 		/* put it in the actual database */
-		db.arr[B->id] = *B;
+		db.arr[db.numberOfBooks] = *B;
 		db.numberOfBooks++;
 		memset(line, 0, sizeof(line));
 	}
@@ -239,7 +240,8 @@ void print_db(const char *file)
 			if (n > 1 && j < n)
 				strcat(name, ",");
 		}
-		fprintf(fd, "\"%s\";\"%s\";\"%d\";\"%s\"\n",
+		fprintf(fd, "\"%s\";\"%s\";\"%s\";\"%d\";\"%s\"\n",
+					db.arr[i].id,
 					db.arr[i].title,
 					name,
 					db.arr[i].yearPublished,
@@ -258,6 +260,7 @@ void user_add_book(void)
 	Book* D;
 	int tmp;
 	char title[257];
+	char id[12];
 	char name[112];
 	char fst[112];
 	char snd[112];
@@ -282,6 +285,11 @@ void user_add_book(void)
 		goto error;
 	chomp(name);
 
+	printf("ID (ISBN)? ");
+	if (! fgets(id, sizeof(id) - 1, stdin))
+		goto error;
+	chomp(id);
+
 	printf("When was it published? ");
 	if (! fgets(year, sizeof(year), stdin))
 		goto error;
@@ -297,7 +305,7 @@ void user_add_book(void)
 	if (!D) fatal("while reallocating the db to add a struct");
 	db.arr = D;
 
-	B = create_book(title, atoi(year), pub);
+	B = create_book(id, title, atoi(year), pub);
 
 	/* take care of the authors */
 	split_names(name, fst, snd);
@@ -306,7 +314,7 @@ void user_add_book(void)
 	/* now add the book at the end */
 	db.arr[db.numberOfBooks] = *B;
 	db.numberOfBooks++;
-	printf("Book node added to database [id: %ld]\n", B->id);
+	printf("Book node added to database [id: %s]\n", B->id);
 	return;
 
 error:
@@ -319,22 +327,26 @@ void user_remove_book(void)
 	Book *D;
 	Book tmp;
 	char title[256];
-	long rid;
+	long id;
+	long index = 0;
 	long size = (db.numberOfBooks - 1) * sizeof(Book);
 
 	printf("ID of the book to remove? ");
-	scanf("%ld", &rid);
-	if (rid < 0 || (unsigned long)rid >= db.numberOfBooks) {
+	scanf("%ld", &id);
+	if (id < 0 || (unsigned long)id >= db.numberOfBooks) {
 		printf("Book removal aborted\n");
 		return;
 	}
 
+	/* Linear search */
+	/* index = find_index_by_id(id); */
+
 	/* keep the title for later */
-	strcpy(title, db.arr[rid].title);
+	strcpy(title, db.arr[index].title);
 
 	/* moving the interesting node at the end */
-	tmp = db.arr[rid];
-	memmove(db.arr+rid, db.arr+rid+1, db.numberOfBooks-rid-1);
+	tmp = db.arr[index];
+	memmove(db.arr+index, db.arr+index+1, db.numberOfBooks-index-1);
 	db.arr[db.numberOfBooks] = tmp;
 
 	/* first freeing any dynamic memory */
