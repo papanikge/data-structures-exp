@@ -67,6 +67,27 @@ static void search_by_id(void)
 		printf("Year  : %d\n",    db.arr[index].yearPublished);
 	}
 }
+
+/* Linear search given a title */
+void search_for_name(void)
+{
+	unsigned long i;
+	char title[256];
+
+	printf("Title of Book to search for? ");
+	scanf("%[0-9a-zA-Z.:!'?,)( ]" title);
+
+	for (i = 0; i < db.numberOfBooks; i++) {
+		if (!strcmp(db.arr[i].title, title)) {
+			printf("Author: %s %s\n", db.arr[index].authors[0].first, db.arr[index].authors[0].last);
+			printf("Year  : %d\n",    db.arr[index].yearPublished);
+			return;
+		}
+	}
+	printf("No Book with that title\n");
+	return;
+}
+
 int main(int argc, const char **argv)
 {
 	unsigned int opt;
@@ -109,7 +130,7 @@ int main(int argc, const char **argv)
 				search_by_id();
 				break;
 			case 6:
-				/* search by name */
+				search_for_name();
 				break;
 			case 7:
 				print_db("stdout");
