@@ -84,7 +84,7 @@ int main(int argc, const char **argv)
 				user_add_book();
 				break;
 			case 4:
-				/* remove a book */
+				user_remove_book();
 				break;
 			case 5:
 				/* search by id */

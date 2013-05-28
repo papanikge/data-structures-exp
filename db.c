@@ -308,3 +308,39 @@ error:
 	printf("Book creation aborted\n");
 	return;
 }
+
+void user_remove_book(void)
+{
+	Book *D;
+	Book tmp;
+	char title[256];
+	long rid;
+	long size = (db.numberOfBooks - 1) * sizeof(Book);
+
+	printf("ID of the book to remove? ");
+	scanf("%ld", &rid);
+	if (rid < 0 || (unsigned long)rid >= db.numberOfBooks) {
+		printf("Book removal aborted\n");
+		return;
+	}
+
+	/* keep the title for later */
+	strcpy(title, db.arr[rid].title);
+
+	/* moving the interesting node at the end */
+	tmp = db.arr[rid];
+	memmove(db.arr+rid, db.arr+rid+1, db.numberOfBooks-rid-1);
+	db.arr[db.numberOfBooks] = tmp;
+
+	/* first freeing any dynamic memory */
+	free(db.arr[db.numberOfBooks].authors);
+
+	/* removing by reallocating by one Book size to free the coresponding
+	 * memory of the interesting node */
+	D = realloc(db.arr, size);
+	if (!D) fatal("while reallocating the db to remove a struct");
+	db.arr = D;
+
+	printf("\"%s\" removed from database\n", title);
+	return;
+}
