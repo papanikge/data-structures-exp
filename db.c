@@ -85,6 +85,21 @@ static Author* create_author(Book* b, char* f, char* l)
 	return a;
 }
 
+/* Linear search to find the array index of a book with a given id */
+long find_index_by_id(char* id)
+{
+	unsigned long i;
+	long index = 0;
+
+	for (i = 0; i < db.numberOfBooks; i++) {
+		if (!strcmp(db.arr[i].id, id)) {
+			index = i;
+			break;
+		}
+	}
+	return index;
+}
+
 /* load and initialize db from file first menu option function */
 void init_db(const char *file)
 {
@@ -327,19 +342,19 @@ void user_remove_book(void)
 	Book *D;
 	Book tmp;
 	char title[256];
-	long id;
-	long index = 0;
+	char id[11];
+	long index;
 	long size = (db.numberOfBooks - 1) * sizeof(Book);
 
 	printf("ID of the book to remove? ");
-	scanf("%ld", &id);
-	if (id < 0 || (unsigned long)id >= db.numberOfBooks) {
-		printf("Book removal aborted\n");
-		return;
-	}
+	scanf("%[0-9]", id);
 
 	/* Linear search */
-	/* index = find_index_by_id(id); */
+	index = find_index_by_id(id);
+	if (!index) {
+		printf("Book not found\n");
+		return;
+	}
 
 	/* keep the title for later */
 	strcpy(title, db.arr[index].title);
