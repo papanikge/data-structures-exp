@@ -48,6 +48,25 @@ static int get_option(void)
 	return (in - 48);
 }
 
+/* Linear search (menu option 5) */
+static void search_by_id(void)
+{
+	char id[11];
+	long index;
+
+	printf("ID to search for? ");
+	scanf("%[0-9]" id);
+
+	index = find_index_by_id(id);
+	if (!index)
+		printf("Book not found\n");
+	else {
+		printf("Title : %s\n",    db.arr[index].title);
+		printf("Author: %s %s\n", db.arr[index].authors[0].first,
+								  db.arr[index].authors[0].last);
+		printf("Year  : %d\n",    db.arr[index].yearPublished);
+	}
+}
 int main(int argc, const char **argv)
 {
 	unsigned int opt;
@@ -87,7 +106,7 @@ int main(int argc, const char **argv)
 				user_remove_book();
 				break;
 			case 5:
-				/* search by id */
+				search_by_id();
 				break;
 			case 6:
 				/* search by name */
