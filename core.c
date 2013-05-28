@@ -78,7 +78,7 @@ int main(int argc, const char **argv)
 				init_db(filename);
 				break;
 			case 2:
-				save_db(filename);
+				print_db(filename);
 				break;
 			case 3:
 				user_add_book();
@@ -93,7 +93,7 @@ int main(int argc, const char **argv)
 				/* search by name */
 				break;
 			case 7:
-				/* display all */
+				print_db("stdout");
 				break;
 			case 8:
 				/* search by last name of author */
@@ -105,6 +105,6 @@ int main(int argc, const char **argv)
 	}
 
 	/* got exit command. save and quit */
-	save_db("datafile.new");
+	print_db("datafile.new");
 	return 0;
 }

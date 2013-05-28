@@ -199,8 +199,8 @@ void init_db(const char *file)
 	fclose(fd);
 }
 
-/* write the dynamic db back to the provided file */
-void save_db(const char *file)
+/* print the dynamic db back to the provided file (can handle stdout) */
+void print_db(const char *file)
 {
 	FILE *fd;
 	int i;
@@ -209,9 +209,13 @@ void save_db(const char *file)
 	int size;
 	char *name;
 
-	fd = fopen(file, "w");
-	if (!fd)
-		fatal("while opening data file for writing");
+	if (!strcmp(file, "stdout")){
+		fd = stdout;
+	}
+	else {
+		fd = fopen(file, "w");
+		if (!fd) fatal("while opening data file for writing");
+	}
 	/* first we write the total number of books */
 	fprintf(fd, "%lu\n", db.numberOfBooks);
 	/* allocate memory for one and reallocate accordingly */
@@ -243,7 +247,8 @@ void save_db(const char *file)
 		memset(name, 0, sizeof(size * n));
 	}
 	free(name);
-	fclose(fd);
+	if (fd != stdout)
+		fclose(fd);
 }
 
 /* resize the db and add a book struct with user input */
