@@ -102,12 +102,38 @@ static void search_for_title(void)
 
 	for (i = 0; i < db.numberOfBooks; i++) {
 		if (!strcmp(db.arr[i].title, title)) {
+			printf("ID    : %s\n",    db.arr[i].id);
 			printf("Author: %s %s\n", db.arr[i].authors[0].first, db.arr[i].authors[0].last);
 			printf("Year  : %d\n",    db.arr[i].yearPublished);
 			return;
 		}
 	}
 	printf("No Book with that title\n");
+	return;
+}
+
+/* Linear search given a surname of author */
+static void search_for_surname(void)
+{
+	unsigned long i;
+	char surname[56];
+	short flag = 1;
+
+	printf("Surname of Author? ");
+
+	clear_stream();
+	scanf("%[a-zA-Z. ]", surname);
+
+	for (i = 0; i < db.numberOfBooks; i++) {
+		if (!strcmp(db.arr[i].authors[0].last, surname)) {
+			flag = 0;
+			printf("ID  : %s\n", db.arr[i].id);
+			printf("Name: %s\n", db.arr[i].title);
+			printf("Year: %d\n\n", db.arr[i].yearPublished);
+		}
+	}
+	if (flag)
+		printf("No Book with such Author\n");
 	return;
 }
 
@@ -159,7 +185,7 @@ int main(int argc, const char **argv)
 				print_db("stdout");
 				break;
 			case 8:
-				/* search by last name of author */
+				search_for_surname();
 				break;
 			default:
 				fatal("get_option() returns something wrong");
