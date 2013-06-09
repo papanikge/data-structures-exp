@@ -36,6 +36,14 @@ void* smalloc(const unsigned int size)
 	return ptr;
 }
 
+/* consume a possible newline in standard input */
+void clear_stream(void)
+{
+	int tmp = fgetc(stdin);
+	if (tmp != '\n')
+		ungetc(tmp, stdin);
+}
+
 /* get a valid option from user */
 static int get_option(void)
 {
@@ -64,6 +72,8 @@ static void search_by_id(void)
 	long index;
 
 	printf("ID to search for? ");
+
+	clear_stream();
 	scanf("%[0-9]", id);
 
 	index = find_index_by_id(id);
@@ -84,6 +94,8 @@ void search_for_name(void)
 	char title[256];
 
 	printf("Title of Book to search for? ");
+
+	clear_stream();
 	scanf("%[0-9a-zA-Z.:!'?,)( ]", title);
 
 	for (i = 0; i < db.numberOfBooks; i++) {

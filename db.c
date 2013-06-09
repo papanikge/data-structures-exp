@@ -243,7 +243,6 @@ void user_add_book(void)
 {
 	Book* B;
 	Book* D;
-	int tmp;
 	char title[257];
 	char id[12];
 	char name[112];
@@ -255,10 +254,7 @@ void user_add_book(void)
 
 	/* get user input */
 	fprintf(stdout, "Title of the Book? ");
-	/* sometimes there is a trailing newline around and we need to consume it*/
-	tmp = fgetc(stdin);
-	if (tmp != '\n')
-		ungetc(tmp, stdin);
+	clear_stream();
 
 	if (! fgets(title, sizeof(title) - 1, stdin))
 		/* checking for error */
@@ -317,6 +313,8 @@ void user_remove_book(void)
 	long size = (db.numberOfBooks - 1) * sizeof(Book);
 
 	printf("ID of the book to remove? ");
+
+	clear_stream();
 	scanf("%[0-9]", id);
 
 	/* Linear search */
