@@ -178,6 +178,8 @@ void init_db(const char *file)
 		db.arr[db.numberOfBooks] = *B;
 		db.numberOfBooks++;
 		memset(line, 0, sizeof(line));
+		/* we copy the data above, so we don't need that */
+		free(B);
 	}
 	fclose(fd);
 }
