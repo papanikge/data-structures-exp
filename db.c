@@ -47,6 +47,7 @@ static void split_names(char* whole, char* first, char* last)
 static Book* create_book(char* given_id, char* name, short year, char* pub)
 {
 	Book *b = smalloc(sizeof(Book));
+	memset(b, 0, sizeof(Book));
 	strncpy(b->id, given_id, 11);
 	strncpy(b->title, name, 256);
 	strncpy(b->publisher, pub, 40);
