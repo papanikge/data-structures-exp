@@ -37,8 +37,8 @@ typedef struct {
 extern Data db;
 
 inline void fatal(char *message);
-void* smalloc(const unsigned int size);
-void clear_stream(void);
+inline void* smalloc(const unsigned int size);
+inline void clear_stream(void);
 void init_db(const char *file);
 void print_db(const char *file);
 void user_add_book(void);

@@ -27,7 +27,7 @@ inline void fatal(char *message)
 }
 
 /* a fail-aware malloc function */
-void* smalloc(const unsigned int size)
+inline void* smalloc(const unsigned int size)
 {
 	void *ptr;
 	ptr = malloc(size);
@@ -37,7 +37,7 @@ void* smalloc(const unsigned int size)
 }
 
 /* consume a possible newline in standard input */
-void clear_stream(void)
+inline void clear_stream(void)
 {
 	int tmp = fgetc(stdin);
 	if (tmp != '\n')
