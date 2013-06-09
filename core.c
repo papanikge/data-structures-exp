@@ -55,7 +55,7 @@ static void search_by_id(void)
 	long index;
 
 	printf("ID to search for? ");
-	scanf("%[0-9]" id);
+	scanf("%[0-9]", id);
 
 	index = find_index_by_id(id);
 	if (!index)
@@ -75,12 +75,12 @@ void search_for_name(void)
 	char title[256];
 
 	printf("Title of Book to search for? ");
-	scanf("%[0-9a-zA-Z.:!'?,)( ]" title);
+	scanf("%[0-9a-zA-Z.:!'?,)( ]", title);
 
 	for (i = 0; i < db.numberOfBooks; i++) {
 		if (!strcmp(db.arr[i].title, title)) {
-			printf("Author: %s %s\n", db.arr[index].authors[0].first, db.arr[index].authors[0].last);
-			printf("Year  : %d\n",    db.arr[index].yearPublished);
+			printf("Author: %s %s\n", db.arr[i].authors[0].first, db.arr[i].authors[0].last);
+			printf("Year  : %d\n",    db.arr[i].yearPublished);
 			return;
 		}
 	}
