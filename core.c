@@ -168,7 +168,7 @@ int main(int argc, const char **argv)
 	}
 
 	/* got exit command. save and quit */
-	print_db("datafile.new");
+	print_db(filename);
 	free_db();
 	return 0;
 }

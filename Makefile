@@ -26,4 +26,7 @@ db: db.c
 clean:
 	-@rm -f program base a.out
 
-.PHONY: clean
+tags:
+	ctags -R .
+
+.PHONY: clean tags
