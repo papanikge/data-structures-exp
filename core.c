@@ -76,7 +76,7 @@ static void search_by_id(void)
 	printf("ID to search for? ");
 
 	clear_stream();
-	scanf("%[0-9]", id);
+	scanf("%[a-zA-Z0-9]", id);
 
 	index = find_index_by_id(id);
 	if (!index)
