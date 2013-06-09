@@ -90,7 +90,7 @@ static void search_by_id(void)
 }
 
 /* Linear search given a title */
-void search_for_name(void)
+static void search_for_title(void)
 {
 	unsigned long i;
 	char title[256];
@@ -153,7 +153,7 @@ int main(int argc, const char **argv)
 				search_by_id();
 				break;
 			case 6:
-				search_for_name();
+				search_for_title();
 				break;
 			case 7:
 				print_db("stdout");
