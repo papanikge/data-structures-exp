@@ -32,16 +32,6 @@ static void chomp(char* s)
 		s[end] = '\0';
 }
 
-/* Count the specified character inside the given string */
-static unsigned int count_char(char* str, const char c)
-{
-	int i;
-	unsigned int count = 0;
-	for (i = 0; str[i] != '\0'; i++)
-		if (str[i] == c) count++;
-	return count;
-}
-
 /* Split a char array to space, so we can get first and last name */
 static void split_names(char* whole, char* first, char* last)
 {
@@ -57,9 +47,9 @@ static void split_names(char* whole, char* first, char* last)
 static Book* create_book(char* given_id, char* name, short year, char* pub)
 {
 	Book *b = smalloc(sizeof(Book));
-	strcpy(b->id, given_id);
-	strcpy(b->title, name);
-	strcpy(b->publisher, pub);
+	strncpy(b->id, given_id, 11);
+	strncpy(b->title, name, 256);
+	strncpy(b->publisher, pub, 40);
 	b->yearPublished = year;
 	b->numberOfAuthors = 0;
 	return b;
@@ -105,9 +95,8 @@ void init_db(const char *file)
 {
 	/* temp buffers and descriptors */
 	FILE *fd;
-	unsigned int i,s;
-	unsigned int next_comma;
-	unsigned int next_space;
+	char *next;
+	int count;
 	char given_id[10];
 	char line[256+56+56+4+40];
 	char book_name[256];
@@ -160,51 +149,29 @@ void init_db(const char *file)
 		if (strlen(the_year) == 0)
 			strcpy(the_year, "0000");
 
-		/* done. creating... */
+		/* Done parsing. Creating... */
 		Book *B;
 		B = create_book(given_id, book_name, atoi(the_year), pub_name);
 
-		/* splitting into different authors and first and last names */
-		next_comma = strcspn(writer, ",");
-		if (next_comma == strlen(writer)) {
-			/* this means there is no comma, so only one author */
-			split_names(writer, first_name, last_name);
-
-			/* add him */
-			B->authors = create_author(B, first_name, last_name);
-		} else {
-			while (count_char(writer, ',') != 0) {
-				next_space = strcspn(writer, " ");
-				/* clear */
-				memset(first_name, 0, sizeof(first_name));
-				memset(last_name, 0, sizeof(last_name));
-
-				if (next_space > next_comma) {
-					/* unlikely but the comma can come before a space */
-					strncpy(first_name, writer, next_comma);
-					strcpy(last_name, " ");
-				} else {
-					/* not using split_names() in here due to multiples */
-					strncpy(first_name, writer, next_space);
-					strncpy(last_name, writer + next_space + 1, next_comma - next_space - 1);
-				}
-
-				/* add him to the db... */
+		/* splitting into different authors and first and last names.
+		 * super simplified. Assuming first-name comes first */
+		count = 0;
+		next = strtok(writer, " ,");
+		while (next != NULL) {
+			/* first names are even numbers */
+			if (count % 2 == 0)
+				strncpy(first_name, next, 56);
+			else {
+				strncpy(last_name, next, 56);
 				B->authors = create_author(B, first_name, last_name);
-
-				/* we need to remove everything before the working comma
-				 * so the next iteration would work.
-				 * First find the lenght of the interesting area */
-				s = 0;
-				for (i = 0; writer[i+next_comma+1] != '\0'; i++)
-					s++;
-				if (s == 0)
-					break;
-				/* and finally... */
-				memmove(writer, writer + next_comma + 1, s);
-				memset(writer + s, 0, sizeof(writer)-s);
-				next_comma = strcspn(writer, ",");
 			}
+			count++;
+			next = strtok(NULL, " ,");
+		}
+		/* possibility of just one first name */
+		if (count == 1) {
+			strcpy(last_name, " ");
+			B->authors = create_author(B, first_name, last_name);
 		}
 
 		/* put it in the actual database */
