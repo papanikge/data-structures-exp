@@ -47,11 +47,13 @@ void clear_stream(void)
 /* get a valid option from user */
 static int get_option(void)
 {
-	int in;
+	int in = 0;
 	do {
 		printf("\nOption? [1..9] ");
 		in = getchar();
-	} while (in < 48 || in > 57);
+		/* getting only the first and cleaning the rest */
+		while(getchar() != '\n');
+	} while (in < (int)'1' || in > (int)'9');
 	/* damn you ascii */
 	return (in - 48);
 }
