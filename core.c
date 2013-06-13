@@ -89,7 +89,7 @@ static void search_by_id(void)
 	}
 }
 
-/* Linear search given a title */
+/* Linear search given a title (menu option 6) */
 static void search_for_title(void)
 {
 	unsigned long i;
@@ -112,7 +112,7 @@ static void search_for_title(void)
 	return;
 }
 
-/* Linear search given a surname of author */
+/* Linear search given a surname of author (menu option 8) */
 static void search_for_surname(void)
 {
 	unsigned long i;
