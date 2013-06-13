@@ -35,6 +35,7 @@ typedef struct {
 
 /* global main in-memory dynamic database */
 extern Data db;
+extern int sorted;
 
 inline void fatal(char *message);
 inline void* smalloc(const unsigned int size);

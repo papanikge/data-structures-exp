@@ -18,6 +18,8 @@
 
 /* global main in-memory dynamic database */
 Data db;
+/* is the db sorted? */
+int sorted = 0;
 
 /* panic function for fatal errors */
 inline void fatal(char *message)
@@ -93,7 +95,10 @@ static void search_by_id(void)
 			B = &db.arr[index];
 			break;
 		case 2:
-			sort_db();
+			if (!sorted) {
+				sort_db();
+				sorted = 1;
+			}
 			B = bsearch_by_id(id);
 			if (B == NULL) {
 				printf("Book not found\n");
@@ -106,8 +111,7 @@ static void search_by_id(void)
 	}
 
 	printf("Title : %s\n",    B->title);
-	printf("Author: %s %s\n", B->authors[0].first,
-							  B->authors[0].last);
+	printf("Author: %s %s\n", B->authors[0].first, B->authors[0].last);
 	printf("Year  : %d\n",    B->yearPublished);
 }
 
