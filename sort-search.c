@@ -13,10 +13,7 @@ static int cmp_nodes(const void *a, const void *b)
 	long first = atol(A->id);
 	long second = atol(B->id);
 
-	if (first == second)
-		return 0;
-	/* else */
-	return (first > second) ? 1 : -1;
+	return (int)(first - second);
 }
 
 /* Main sort function. The implementations may vary */
