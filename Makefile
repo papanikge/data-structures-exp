@@ -11,8 +11,8 @@ OPT=-O0
 FLAGS=-g
 
 # default target that compiles and runs
-all: core db
-	$(CC) core.o db.o -o program
+all: core db search
+	$(CC) core.o db.o sort-search.o -o program
 	rm *.o
 	@./program
 
@@ -20,8 +20,11 @@ all: core db
 core: core.c core.h
 	$(CC) $(WARN) $(OPT) $(FLAGS) -c core.c
 
-db: db.c
+db: db.c core.h
 	$(CC) $(WARN) $(OPT) $(FLAGS) -c db.c
+
+search: sort-search.c core.h
+	$(CC) $(WARN) $(OPT) $(FLAGS) -c sort-search.c
 
 clean:
 	-@rm -f program base a.out

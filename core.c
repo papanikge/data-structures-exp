@@ -192,9 +192,11 @@ int main(int argc, const char **argv)
 				break;
 		}
 	}
+	sort_db();
+	printf("After: 219200: %s\n", db.arr[219199].id);
 
 	/* got exit command. save and quit */
-	print_db(filename);
+	/* print_db(filename); */
 	free_db();
 	return 0;
 }
