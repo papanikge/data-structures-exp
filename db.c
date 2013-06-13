@@ -44,11 +44,11 @@ static void split_names(char* whole, char* first, char* last)
 }
 
 /* create and return a book struct */
-static Book* create_book(char* given_id, char* name, short year, char* pub)
+static Book* create_book(long given_id, char* name, short year, char* pub)
 {
 	Book *b = smalloc(sizeof(Book));
 	memset(b, 0, sizeof(Book));
-	strncpy(b->id, given_id, 11);
+	b->id = given_id;
 	strncpy(b->title, name, 256);
 	strncpy(b->publisher, pub, 40);
 	b->yearPublished = year;
@@ -77,13 +77,13 @@ static Author* create_author(Book* b, char* f, char* l)
 }
 
 /* Linear search to find the array index of a book with a given id */
-long find_index_by_id(char* id)
+long find_index_by_id(long id)
 {
 	unsigned long i;
 	long index = 0;
 
 	for (i = 0; i < db.numberOfBooks; i++) {
-		if (strcmp(db.arr[i].id, id) == 0) {
+		if (db.arr[i].id == id) {
 			index = i;
 			break;
 		}
@@ -152,7 +152,7 @@ void init_db(const char *file)
 
 		/* Done parsing. Creating... */
 		Book *B;
-		B = create_book(given_id, book_name, atoi(the_year), pub_name);
+		B = create_book(atol(given_id), book_name, atoi(the_year), pub_name);
 
 		/* splitting into different authors and first and last names.
 		 * super simplified. Assuming first-name comes first */
@@ -225,7 +225,7 @@ void print_db(const char *file)
 			if (n > 1 && j < n)
 				strcat(name, ",");
 		}
-		fprintf(fd, "\"%s\";\"%s\";\"%s\";\"%d\";\"%s\"\n",
+		fprintf(fd, "\"%ld\";\"%s\";\"%s\";\"%d\";\"%s\"\n",
 					db.arr[i].id,
 					db.arr[i].title,
 					name,
@@ -244,7 +244,7 @@ void user_add_book(void)
 	Book* B;
 	Book* D;
 	char title[257];
-	char id[12];
+	long id;
 	char name[112];
 	char fst[112];
 	char snd[112];
@@ -266,10 +266,9 @@ void user_add_book(void)
 		goto error;
 	chomp(name);
 
-	printf("ID (ISBN)? ");
-	if (! fgets(id, sizeof(id) - 1, stdin))
+	printf("ID (10 numbers)? ");
+	if (scanf("%ld", &id) == 0)
 		goto error;
-	chomp(id);
 
 	printf("When was it published? ");
 	if (! fgets(year, sizeof(year), stdin))
@@ -295,7 +294,7 @@ void user_add_book(void)
 	/* now add the book at the end */
 	db.arr[db.numberOfBooks] = *B;
 	db.numberOfBooks++;
-	printf("Book node added to database [id: %s]\n", B->id);
+	printf("Book node added to database [id: %ld]\n", B->id);
 	return;
 
 error:
@@ -308,14 +307,14 @@ void user_remove_book(void)
 	Book *D;
 	Book tmp;
 	char title[256];
-	char id[11];
+	long id;
 	long index;
 	long size = (db.numberOfBooks - 1) * sizeof(Book);
 
 	printf("ID of the book to remove? ");
 
 	clear_stream();
-	scanf("%[0-9]", id);
+	scanf("%ld", &id);
 
 	/* Linear search */
 	index = find_index_by_id(id);

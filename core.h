@@ -17,7 +17,7 @@ typedef struct {
 /* a single unit type */
 /* more than one author possible */
 typedef struct {
-	char   id[11];
+	long   id;
 	char   title[256];
 	char   publisher[40];
 	short  yearPublished;
@@ -44,6 +44,6 @@ void init_db(const char *file);
 void print_db(const char *file);
 void user_add_book(void);
 void user_remove_book(void);
-long find_index_by_id(char* id);
+long find_index_by_id(long id);
 void sort_db(void);
-Book* bsearch_by_id(const char* id);
+Book* bsearch_by_id(const long id);

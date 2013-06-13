@@ -72,14 +72,14 @@ static void free_db(void)
 /* Linear search (menu option 5) */
 static void search_by_id(void)
 {
-	char id[11];
+	long id;
 	int way;
 	long index;
 	Book *B;
 
 	printf("ID to search for? ");
 	clear_stream();
-	scanf("%[0-9]", id);
+	scanf("%ld", &id);
 
 	printf("Which way to search? [1-linear 2-binary] ");
 	clear_stream();
@@ -128,7 +128,7 @@ static void search_for_title(void)
 
 	for (i = 0; i < db.numberOfBooks; i++) {
 		if (strcmp(db.arr[i].title, title) == 0) {
-			printf("ID    : %s\n",    db.arr[i].id);
+			printf("ID    : %ld\n",   db.arr[i].id);
 			printf("Author: %s %s\n", db.arr[i].authors[0].first, db.arr[i].authors[0].last);
 			printf("Year  : %d\n",    db.arr[i].yearPublished);
 			return;
@@ -153,7 +153,7 @@ static void search_for_surname(void)
 	for (i = 0; i < db.numberOfBooks; i++) {
 		if (strcmp(db.arr[i].authors[0].last, surname) == 0) {
 			flag = 0;
-			printf("ID  : %s\n", db.arr[i].id);
+			printf("ID  : %ld\n", db.arr[i].id);
 			printf("Name: %s\n", db.arr[i].title);
 			printf("Year: %d\n\n", db.arr[i].yearPublished);
 		}

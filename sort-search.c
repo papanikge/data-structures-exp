@@ -8,12 +8,10 @@
  * to be used with glibc qsort function */
 static int cmp_nodes(const void *a, const void *b)
 {
-	Book* A = (Book*) a;
-	Book* B = (Book*) b;
-	long first = atol(A->id);
-	long second = atol(B->id);
+	Book A = *(Book*) a;
+	Book B = *(Book*) b;
 
-	return (int)(first - second);
+	return (int)(A.id - B.id);
 }
 
 /* binary traversing through the db in order to search
@@ -57,11 +55,11 @@ void sort_db(void)
  * currently using btraverse with mode 1
  * Caller *must sort* db
  * Return value may be NULL */
-Book* bsearch_by_id(const char* id)
+Book* bsearch_by_id(const long id)
 {
 	int ret;
 	Book key;
-	strncpy(key.id, id, 11);
+	key.id = id;
 
 	ret = btraverse(&key, 1);
 	return (ret == -1) ? NULL : &db.arr[ret];
