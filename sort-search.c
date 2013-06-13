@@ -29,8 +29,12 @@ static int btraverse(Book *key, int mode)
 		 * 2 - binary interpolation search
 		 */
 		if (mode == 1)
-			middle = (search_to - search_from)/2 + search_from;
-		else {/* calculate pivot */}
+			middle = (search_to + search_from)/2;
+		else {
+			middle = search_from +
+				 ((key->id - db.arr[search_from]) * (search_to - search_from))/
+				 (db.arr[search_to] - db.arr[search_from]);
+		}
 
 		get = cmp_nodes(key, &db.arr[middle]);
 
@@ -49,18 +53,4 @@ void sort_db(void)
 {
 	/* using libc's Quicksort since we favor speed over memory */
 	qsort(&db.arr[0], db.numberOfBooks, sizeof(Book), cmp_nodes);
-}
-
-/* Binary search database for a given id
- * currently using btraverse with mode 1
- * Caller *must sort* db
- * Return value may be NULL */
-Book* bsearch_by_id(const long id)
-{
-	int ret;
-	Book key;
-	key.id = id;
-
-	ret = btraverse(&key, 1);
-	return (ret == -1) ? NULL : &db.arr[ret];
 }

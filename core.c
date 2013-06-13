@@ -95,15 +95,21 @@ static void search_by_id(void)
 			B = &db.arr[index];
 			break;
 		case 2:
+		case 3:
+			/* sort if needed */
 			if (!sorted) {
 				sort_db();
 				sorted = 1;
 			}
-			B = bsearch_by_id(id);
-			if (B == NULL) {
+			Book key;
+			key.id = id;
+			/* using way - 1 here to get the correct mode in btraverse */
+			ret = btraverse(&key, way - 1);
+			if (ret == -1) {
 				printf("Book not found\n");
 				return;
 			}
+			B = &db.arr[ret];
 			break;
 		default:
 			printf("Wrong answer\n");
