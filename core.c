@@ -123,7 +123,7 @@ static void search_for_title(void)
 	scanf("%[0-9a-zA-Z.:!'?,)( ]", title);
 
 	for (i = 0; i < db.numberOfBooks; i++) {
-		if (!strcmp(db.arr[i].title, title)) {
+		if (strcmp(db.arr[i].title, title) == 0) {
 			printf("ID    : %s\n",    db.arr[i].id);
 			printf("Author: %s %s\n", db.arr[i].authors[0].first, db.arr[i].authors[0].last);
 			printf("Year  : %d\n",    db.arr[i].yearPublished);
@@ -147,7 +147,7 @@ static void search_for_surname(void)
 	scanf("%[a-zA-Z. ]", surname);
 
 	for (i = 0; i < db.numberOfBooks; i++) {
-		if (!strcmp(db.arr[i].authors[0].last, surname)) {
+		if (strcmp(db.arr[i].authors[0].last, surname) == 0) {
 			flag = 0;
 			printf("ID  : %s\n", db.arr[i].id);
 			printf("Name: %s\n", db.arr[i].title);

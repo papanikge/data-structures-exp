@@ -83,7 +83,7 @@ long find_index_by_id(char* id)
 	long index = 0;
 
 	for (i = 0; i < db.numberOfBooks; i++) {
-		if (!strcmp(db.arr[i].id, id)) {
+		if (strcmp(db.arr[i].id, id) == 0) {
 			index = i;
 			break;
 		}
@@ -195,7 +195,7 @@ void print_db(const char *file)
 	int size;
 	char *name;
 
-	if (!strcmp(file, "stdout")){
+	if (strcmp(file, "stdout") == 0){
 		fd = stdout;
 	}
 	else {
