@@ -71,22 +71,44 @@ static void free_db(void)
 static void search_by_id(void)
 {
 	char id[11];
+	int way;
 	long index;
+	Book *B;
 
 	printf("ID to search for? ");
-
 	clear_stream();
-	scanf("%[a-zA-Z0-9]", id);
+	scanf("%[0-9]", id);
 
-	index = find_index_by_id(id);
-	if (!index)
-		printf("Book not found\n");
-	else {
-		printf("Title : %s\n",    db.arr[index].title);
-		printf("Author: %s %s\n", db.arr[index].authors[0].first,
-								  db.arr[index].authors[0].last);
-		printf("Year  : %d\n",    db.arr[index].yearPublished);
+	printf("Which way to search? [1-linear 2-binary] ");
+	clear_stream();
+	scanf("%d", &way);
+
+	switch(way) {
+		case 1:
+			index = find_index_by_id(id);
+			if (!index) {
+				printf("Book not found\n");
+				return;
+			}
+			B = &db.arr[index];
+			break;
+		case 2:
+			sort_db();
+			B = bsearch_by_id(id);
+			if (B == NULL) {
+				printf("Book not found\n");
+				return;
+			}
+			break;
+		default:
+			printf("Wrong answer\n");
+			return;
 	}
+
+	printf("Title : %s\n",    B->title);
+	printf("Author: %s %s\n", B->authors[0].first,
+							  B->authors[0].last);
+	printf("Year  : %d\n",    B->yearPublished);
 }
 
 /* Linear search given a title (menu option 6) */
@@ -192,8 +214,6 @@ int main(int argc, const char **argv)
 				break;
 		}
 	}
-	sort_db();
-	printf("After: 219200: %s\n", db.arr[219199].id);
 
 	/* got exit command. save and quit */
 	/* print_db(filename); */
