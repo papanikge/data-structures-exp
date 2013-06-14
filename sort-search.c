@@ -42,6 +42,19 @@ int btraverse(long id, int mode)
 /* Main sort function. The implementations may vary */
 void sort_db(void)
 {
-	/* using libc's Quicksort since we favor speed over memory */
-	qsort(&db.arr[0], db.numberOfBooks, sizeof(Book), cmp_nodes);
+	Book T;
+	int min;
+	unsigned long i, j;
+
+	/* implementing selection sort in order to use less memory */
+	for (i = 0; i < db.numberOfBooks; i++) {
+		min = i;
+		for (j = i + 1; j < db.numberOfBooks; j++)
+			if (db.arr[j].id < db.arr[min].id)
+				min = j;
+		/* swap nodes here */
+		T = db.arr[i];
+		db.arr[i] = db.arr[min];
+		db.arr[min] = T;
+	}
 }
