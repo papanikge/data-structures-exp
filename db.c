@@ -80,15 +80,14 @@ static Author* create_author(Book* b, char* f, char* l)
 long find_index_by_id(long id)
 {
 	unsigned long i;
-	long index = 0;
 
 	for (i = 0; i < db.numberOfBooks; i++) {
 		if (db.arr[i].id == id) {
-			index = i;
-			break;
+			return i;
 		}
 	}
-	return index;
+	/* else */
+	return -1;
 }
 
 /* load and initialize db from file first menu option function */

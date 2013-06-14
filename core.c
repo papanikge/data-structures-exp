@@ -81,18 +81,13 @@ static void search_by_id(void)
 	clear_stream();
 	scanf("%ld", &id);
 
-	printf("Which way to search? [1-linear 2-binary] ");
+	printf("Which way to search? [1-linear 2-binary 3-interpolation] ");
 	clear_stream();
 	scanf("%d", &way);
 
 	switch(way) {
 		case 1:
 			index = find_index_by_id(id);
-			if (!index) {
-				printf("Book not found\n");
-				return;
-			}
-			B = &db.arr[index];
 			break;
 		case 2:
 		case 3:
@@ -103,17 +98,18 @@ static void search_by_id(void)
 				sorted = 1;
 			}
 			/* using way - 1 here to get the correct mode in btraverse */
-			int ret = btraverse(id, way - 1);
-			if (ret == -1) {
-				printf("Book not found\n");
-				return;
-			}
-			B = &db.arr[ret];
+			index = btraverse(id, way - 1);
 			break;
 		default:
 			printf("Wrong answer\n");
 			return;
 	}
+
+	if (index == -1) {
+		printf("Book not found\n");
+		return;
+	}
+	B = &db.arr[index];
 
 	printf("Title : %s\n",    B->title);
 	printf("Author: %s %s\n", B->authors[0].first, B->authors[0].last);

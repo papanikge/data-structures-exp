@@ -6,11 +6,11 @@
 
 /* binary traversing through the db in order to search
  * see below for multiple modes */
-int btraverse(long id, int mode)
+long btraverse(long id, int mode)
 {
-	int middle, get;
-	int search_from = 0;
-	int search_to   = db.numberOfBooks - 1;
+	long middle, get;
+	long search_from = 0;
+	long search_to   = db.numberOfBooks - 1;
 
 	while (search_to >= search_from) {
 		/*

@@ -46,4 +46,4 @@ void user_add_book(void);
 void user_remove_book(void);
 long find_index_by_id(long id);
 void sort_db(void);
-int btraverse(long id, int mode);
+long btraverse(long id, int mode);
