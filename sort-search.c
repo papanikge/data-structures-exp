@@ -4,23 +4,13 @@
 
 #include "core.h"
 
-/* the comparing function for two particular Books
- * to be used with glibc qsort function */
-static int cmp_nodes(const void *a, const void *b)
-{
-	Book A = *(Book*) a;
-	Book B = *(Book*) b;
-
-	return (int)(A.id - B.id);
-}
-
 /* binary traversing through the db in order to search
  * see below for multiple modes */
-static int btraverse(Book *key, int mode)
+int btraverse(long id, int mode)
 {
 	int middle, get;
 	int search_from = 0;
-	int search_to = db.numberOfBooks - 1;
+	int search_to   = db.numberOfBooks - 1;
 
 	while (search_to >= search_from) {
 		/*
@@ -32,11 +22,12 @@ static int btraverse(Book *key, int mode)
 			middle = (search_to + search_from)/2;
 		else {
 			middle = search_from +
-				 ((key->id - db.arr[search_from]) * (search_to - search_from))/
-				 (db.arr[search_to] - db.arr[search_from]);
+				((id - db.arr[search_from].id) * (search_to - search_from))/
+				(db.arr[search_to].id - db.arr[search_from].id);
 		}
 
-		get = cmp_nodes(key, &db.arr[middle]);
+		/* a way to find out which is bigger */
+		get = id - db.arr[middle].id;
 
 		if (get > 0)
 			search_from = middle + 1;

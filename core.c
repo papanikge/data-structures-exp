@@ -98,13 +98,12 @@ static void search_by_id(void)
 		case 3:
 			/* sort if needed */
 			if (!sorted) {
+				printf("Sorting...\n");
 				sort_db();
 				sorted = 1;
 			}
-			Book key;
-			key.id = id;
 			/* using way - 1 here to get the correct mode in btraverse */
-			ret = btraverse(&key, way - 1);
+			int ret = btraverse(id, way - 1);
 			if (ret == -1) {
 				printf("Book not found\n");
 				return;
