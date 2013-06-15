@@ -116,7 +116,7 @@ static void search_by_id(void)
 }
 
 /* Linear search given a title (menu option 6) */
-static void search_for_title(void)
+static void search_by_title(void)
 {
 	unsigned long i;
 	char title[256];
@@ -139,7 +139,7 @@ static void search_for_title(void)
 }
 
 /* Linear search given a surname of author (menu option 8) */
-static void search_for_surname(void)
+static void search_by_surname(void)
 {
 	unsigned long i;
 	char surname[56];
@@ -205,13 +205,13 @@ int main(int argc, const char **argv)
 				search_by_id();
 				break;
 			case 6:
-				search_for_title();
+				search_by_title();
 				break;
 			case 7:
 				print_db("stdout");
 				break;
 			case 8:
-				search_for_surname();
+				search_by_surname();
 				break;
 			default:
 				fatal("get_option() returns something wrong");
