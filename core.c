@@ -59,15 +59,6 @@ static int get_option(void)
 	return in;
 }
 
-/* calling when creating the db all over again or when quitting */
-static void free_db(void)
-{
-	unsigned long i;
-	for (i = 0; i < db.numberOfBooks; i++)
-		free(db.arr[i].authors);
-	free(db.arr);
-}
-
 /* Linear search (menu option 5) */
 static void search_by_id(void)
 {
@@ -189,7 +180,7 @@ int main(int argc, const char **argv)
 	while ((opt = get_option()) != 9) {
 		switch (opt) {
 			case 1:
-				free_db();
+				free(db.arr);
 				init_db(filename);
 				break;
 			case 2:
@@ -221,6 +212,6 @@ int main(int argc, const char **argv)
 
 	/* got exit command. save and quit */
 	/* print_db(filename); */
-	free_db();
+	free(db.arr);
 	return 0;
 }
