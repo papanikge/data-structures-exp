@@ -242,12 +242,12 @@ void user_add_book(void)
 {
 	Book* B;
 	Book* D;
-	char title[257];
 	long id;
+	int year;
+	char title[257];
 	char name[112];
 	char fst[112];
 	char snd[112];
-	char year[6];
 	char pub[41];
 	long size = (db.numberOfBooks + 1) * sizeof(Book);
 
@@ -273,10 +273,10 @@ void user_add_book(void)
 	while(getchar() != '\n');
 
 	printf("When was it published? ");
-	if (! fgets(year, sizeof(year), stdin))
+	if (scanf("%d", &year) == 0)
 		goto error;
-	chomp(year);
-	/* XXX: maybe assert that this is 4 numbers */
+	while(getchar() != '\n');
+
 	printf("Publisher company? ");
 	if (! fgets(pub, sizeof(pub) - 1, stdin))
 		goto error;
@@ -287,7 +287,7 @@ void user_add_book(void)
 	if (!D) fatal("while reallocating the db to add a struct");
 	db.arr = D;
 
-	B = create_book(id, title, atoi(year), pub);
+	B = create_book(id, title, year, pub);
 
 	/* take care of the authors */
 	split_names(name, fst, snd);
