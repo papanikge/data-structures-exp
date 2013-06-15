@@ -269,6 +269,9 @@ void user_add_book(void)
 	if (scanf("%ld", &id) == 0)
 		goto error;
 
+	/* clearing stream in another way due to scanf */
+	while(getchar() != '\n');
+
 	printf("When was it published? ");
 	if (! fgets(year, sizeof(year), stdin))
 		goto error;
@@ -317,7 +320,7 @@ void user_remove_book(void)
 
 	/* Linear search */
 	index = find_index_by_id(id);
-	if (!index) {
+	if (index == -1) {
 		printf("Book not found\n");
 		return;
 	}

@@ -121,7 +121,7 @@ static void search_by_title(void)
 	unsigned long i;
 	char title[256];
 
-	printf("Title of Book to search for? ");
+	printf("Title of Book to (linearly) search for? ");
 
 	clear_stream();
 	scanf("%[0-9a-zA-Z.:!'?,)( ]", title);
