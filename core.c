@@ -51,13 +51,12 @@ static int get_option(void)
 {
 	int in = 0;
 	do {
-		printf("\nOption? [1..9] ");
-		in = getchar();
-		/* getting only the first and cleaning the rest */
+		printf("Option? [1..9] ");
+		scanf("%d", &in);
+		/* consume extra chars */
 		while(getchar() != '\n');
-	} while (in < (int)'1' || in > (int)'9');
-	/* damn you ascii */
-	return (in - 48);
+	} while (in < 1 || in > 9);
+	return in;
 }
 
 /* calling when creating the db all over again or when quitting */
