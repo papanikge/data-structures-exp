@@ -331,16 +331,17 @@ void user_remove_book(void)
 	/* moving the interesting node at the end */
 	tmp = db.arr[index];
 	memmove(db.arr+index, db.arr+index+1, db.numberOfBooks-index-1);
-	db.arr[db.numberOfBooks] = tmp;
+	db.arr[db.numberOfBooks - 1] = tmp;
 
 	/* first freeing any dynamic memory */
-	free(db.arr[db.numberOfBooks].authors);
+	free(db.arr[db.numberOfBooks - 1].authors);
 
 	/* removing by reallocating by one Book size to free the coresponding
 	 * memory of the interesting node */
 	D = realloc(db.arr, size);
 	if (!D) fatal("while reallocating the db to remove a struct");
 	db.arr = D;
+	db.numberOfBooks--;
 
 	printf("\"%s\" removed from database\n", title);
 	return;
