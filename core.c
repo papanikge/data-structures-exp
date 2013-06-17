@@ -155,7 +155,7 @@ static void search_by_surname(void)
 }
 
 /* menu option 4 */
-void user_remove_book(void)
+static void user_remove_book(void)
 {
 	char title[256];
 	long id;

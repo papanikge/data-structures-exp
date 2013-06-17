@@ -108,6 +108,27 @@ long find_index_by_id(long id)
 	return -1;
 }
 
+/* internal function to resize the db and add a book */
+int add_book(Book* A)
+{
+	long size = (db.numberOfBooks + 1) * sizeof(Book);
+	/* the new array */
+	Book* D;
+
+	/* make it bigger */
+	D = realloc(db.arr, size);
+	if (D) {
+		db.arr = D;
+		/* now add the book at the end */
+		db.arr[db.numberOfBooks] = *A;
+		db.numberOfBooks++;
+		sorted = 0;
+		free(A);
+		return 0;
+	} else
+		return -1;
+}
+
 /* internal function for general removing by index */
 int remove_book(long index)
 {
@@ -261,17 +282,16 @@ void print_db(const char *file)
 		fclose(fd);
 }
 
-/* resize the db and add a book struct with user input */
+/* resize the db and add a book struct with user input
+ * this lives here since it uses static db functions */
 void user_add_book(void)
 {
 	Book* B;
-	Book* D;
 	long id;
 	int year;
 	char title[257];
 	char name[112];
 	char pub[41];
-	long size = (db.numberOfBooks + 1) * sizeof(Book);
 
 	/* get user input */
 	fprintf(stdout, "Title of the Book? ");
@@ -304,21 +324,14 @@ void user_add_book(void)
 		goto error;
 	chomp(pub);
 
-	/* make it bigger */
-	D = realloc(db.arr, size);
-	if (!D) fatal("while reallocating the db to add a struct");
-	db.arr = D;
-
+	/* create and call function to add it */
 	B = create_book(id, title, year, pub);
-
-	/* take care of the authors */
 	split_create_authors(B, name);
 
-	/* now add the book at the end */
-	db.arr[db.numberOfBooks] = *B;
-	db.numberOfBooks++;
-	printf("Book node added to database [id: %ld]\n", B->id);
-	return;
+	if (!add_book(B)) {
+		printf("Book node added to database [id: %ld]\n", B->id);
+		return;
+	}
 
 error:
 	printf("Book creation aborted\n");
