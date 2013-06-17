@@ -32,17 +32,6 @@ static void chomp(char* s)
 		s[end] = '\0';
 }
 
-/* Split a char array to space, so we can get first and last name */
-static void split_names(char* whole, char* first, char* last)
-{
-	unsigned int next_space = strcspn(whole, " ");
-	strncpy(first, whole, next_space);
-	strncpy(last , whole + next_space + 1, strlen(whole));
-	/* now there is probably a space prefixed */
-	if (last[0] == ' ')
-		memmove(last, last + 1, strlen(last));
-}
-
 /* create and return a book struct */
 static Book* create_book(long given_id, char* name, short year, char* pub)
 {
@@ -74,6 +63,35 @@ static Author* create_author(Book* b, char* f, char* l)
 	/* increment the counter */
 	b->numberOfAuthors++;
 	return a;
+}
+
+/* function to split into different authors and first and last names.
+ * and assign them. Super simplified. Assuming first-name comes first */
+void split_create_authors(Book* B, char* full)
+{
+	int count;
+	char *next;
+	char first_name[56];
+	char last_name[56];
+
+	count = 0;
+	next = strtok(full, " ,");
+	while (next != NULL) {
+		/* first names are even numbers */
+		if (count % 2 == 0)
+			strncpy(first_name, next, 56);
+		else {
+			strncpy(last_name, next, 56);
+			B->authors = create_author(B, first_name, last_name);
+		}
+		count++;
+		next = strtok(NULL, " ,");
+	}
+	/* possibility of just one first name */
+	if (count == 1) {
+		strcpy(last_name, " ");
+		B->authors = create_author(B, first_name, last_name);
+	}
 }
 
 /* Linear search to find the array index of a book with a given id */
@@ -123,14 +141,10 @@ void init_db(const char *file)
 {
 	/* temp buffers and descriptors */
 	FILE *fd;
-	char *next;
-	int count;
-	char given_id[10];
+	char given_id[11];
 	char line[256+56+56+4+40];
 	char book_name[256];
 	char writer[56*2];
-	char first_name[56];
-	char last_name[56];
 	char the_year[4];
 	char pub_name[40];
 
@@ -156,8 +170,6 @@ void init_db(const char *file)
 		memset(given_id, 0, sizeof(given_id));
 		memset(book_name, 0, sizeof(book_name));
 		memset(writer, 0, sizeof(writer));
-		memset(first_name, 0, sizeof(first_name));
-		memset(last_name, 0, sizeof(last_name));
 		memset(the_year, 0, sizeof(the_year));
 		memset(pub_name, 0, sizeof(pub_name));
 
@@ -177,34 +189,18 @@ void init_db(const char *file)
 		if (strlen(the_year) == 0)
 			strcpy(the_year, "0000");
 
-		/* Done parsing. Creating... */
+		/* Done parsing. Creating book */
 		Book *B;
 		B = create_book(atol(given_id), book_name, atoi(the_year), pub_name);
 
-		/* splitting into different authors and first and last names.
-		 * super simplified. Assuming first-name comes first */
-		count = 0;
-		next = strtok(writer, " ,");
-		while (next != NULL) {
-			/* first names are even numbers */
-			if (count % 2 == 0)
-				strncpy(first_name, next, 56);
-			else {
-				strncpy(last_name, next, 56);
-				B->authors = create_author(B, first_name, last_name);
-			}
-			count++;
-			next = strtok(NULL, " ,");
-		}
-		/* possibility of just one first name */
-		if (count == 1) {
-			strcpy(last_name, " ");
-			B->authors = create_author(B, first_name, last_name);
-		}
+		/* creating authors */
+		split_create_authors(B, writer);
 
 		/* put it in the actual database */
 		db.arr[db.numberOfBooks] = *B;
 		db.numberOfBooks++;
+
+		/* clean */
 		memset(line, 0, sizeof(line));
 		/* we copy the data above, so we don't need that */
 		free(B);
@@ -274,8 +270,6 @@ void user_add_book(void)
 	int year;
 	char title[257];
 	char name[112];
-	char fst[112];
-	char snd[112];
 	char pub[41];
 	long size = (db.numberOfBooks + 1) * sizeof(Book);
 
@@ -318,8 +312,7 @@ void user_add_book(void)
 	B = create_book(id, title, year, pub);
 
 	/* take care of the authors */
-	split_names(name, fst, snd);
-	B->authors = create_author(B, fst, snd);
+	split_create_authors(B, name);
 
 	/* now add the book at the end */
 	db.arr[db.numberOfBooks] = *B;
