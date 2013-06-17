@@ -90,6 +90,34 @@ long find_index_by_id(long id)
 	return -1;
 }
 
+/* internal function for general removing by index */
+int remove_book(long index)
+{
+	Book *D;
+	Book tmp;
+	long size = (db.numberOfBooks - 1) * sizeof(Book);
+
+	/* moving the interesting node at the end */
+	tmp = db.arr[index];
+	memmove(db.arr+index, db.arr+index+1,
+			sizeof(Book)*(db.numberOfBooks-index-1));
+	db.arr[db.numberOfBooks - 1] = tmp;
+
+	/* first freeing any dynamic memory */
+	free(db.arr[db.numberOfBooks - 1].authors);
+
+	/* removing by reallocating by one Book size to free the coresponding
+	 * memory of the interesting node */
+	D = realloc(db.arr, size);
+	if (D) {
+		/* replace and reduce the sum */
+		db.arr = D;
+		db.numberOfBooks--;
+		return 0;
+	} else
+		return -1;
+}
+
 /* load and initialize db from file first menu option function */
 void init_db(const char *file)
 {
@@ -301,48 +329,5 @@ void user_add_book(void)
 
 error:
 	printf("Book creation aborted\n");
-	return;
-}
-
-void user_remove_book(void)
-{
-	Book *D;
-	Book tmp;
-	char title[256];
-	long id;
-	long index;
-	long size = (db.numberOfBooks - 1) * sizeof(Book);
-
-	printf("ID of the book to remove? ");
-
-	clear_stream();
-	scanf("%ld", &id);
-
-	/* Linear search */
-	index = find_index_by_id(id);
-	if (index == -1) {
-		printf("Book not found\n");
-		return;
-	}
-
-	/* keep the title for later */
-	strcpy(title, db.arr[index].title);
-
-	/* moving the interesting node at the end */
-	tmp = db.arr[index];
-	memmove(db.arr+index, db.arr+index+1, sizeof(Book)*(db.numberOfBooks-index-1));
-	db.arr[db.numberOfBooks - 1] = tmp;
-
-	/* first freeing any dynamic memory */
-	free(db.arr[db.numberOfBooks - 1].authors);
-
-	/* removing by reallocating by one Book size to free the coresponding
-	 * memory of the interesting node */
-	D = realloc(db.arr, size);
-	if (!D) fatal("while reallocating the db to remove a struct");
-	db.arr = D;
-	db.numberOfBooks--;
-
-	printf("\"%s\" removed from database\n", title);
 	return;
 }

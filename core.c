@@ -154,6 +154,36 @@ static void search_by_surname(void)
 	return;
 }
 
+/* menu option 4 */
+void user_remove_book(void)
+{
+	char title[256];
+	long id;
+	long index;
+
+	printf("ID of the book to remove? ");
+
+	clear_stream();
+	scanf("%ld", &id);
+
+	/* Linear search */
+	index = find_index_by_id(id);
+	if (index == -1) {
+		printf("Book not found\n");
+		return;
+	}
+
+	/* keep the title for later */
+	strcpy(title, db.arr[index].title);
+
+	if (!remove_book(index))
+		printf("\"%s\" removed from database\n", title);
+	else
+		printf("Couldn't reallocate\n");
+
+	return;
+}
+
 int main(int argc, const char **argv)
 {
 	unsigned int opt;
