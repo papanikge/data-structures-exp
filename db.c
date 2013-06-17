@@ -330,7 +330,7 @@ void user_remove_book(void)
 
 	/* moving the interesting node at the end */
 	tmp = db.arr[index];
-	memmove(db.arr+index, db.arr+index+1, db.numberOfBooks-index-1);
+	memmove(db.arr+index, db.arr+index+1, sizeof(Book)*(db.numberOfBooks-index-1));
 	db.arr[db.numberOfBooks - 1] = tmp;
 
 	/* first freeing any dynamic memory */
