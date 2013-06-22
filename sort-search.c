@@ -42,19 +42,17 @@ long btraverse(long id, int mode)
 /* Main sort function. The implementations may vary */
 void sort_db(void)
 {
-	Book T;
-	int min;
-	unsigned long i, j;
+	Book pivot;
+	long i, j;
 
-	/* implementing selection sort in order to use less memory */
-	for (i = 0; i < db.numberOfBooks; i++) {
-		min = i;
-		for (j = i + 1; j < db.numberOfBooks; j++)
-			if (db.arr[j].id < db.arr[min].id)
-				min = j;
-		/* swap nodes here */
-		T = db.arr[i];
-		db.arr[i] = db.arr[min];
-		db.arr[min] = T;
-	}
+	/* this is insertion sort. it may still be slow */
+    for (i = 1; (unsigned)i < db.numberOfBooks; i++) {
+		/* keep the pivot element to check and have it available later */
+        pivot = db.arr[i];
+		/* iterate from i and back. pushing the other */
+        for (j = i -1; j >= 0 && pivot.id < db.arr[j].id; j--)
+            db.arr[j + 1] = db.arr[j];
+		/* found the right place, write the saved */
+        db.arr[j + 1] = pivot;
+    }
 }
