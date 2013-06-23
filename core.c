@@ -203,15 +203,15 @@ int main(int argc, const char **argv)
 	for (i = 0; i < db.numberOfBooks; i++)
 		avl = avl_insert(&db.arr[i], avl);
 
-	printf("[1] Load books from file\n");
-	printf("[2] Save books to file\n");
-	printf("[3] Add a book\n");
-	printf("[4] Delete a book by id\n");
-	printf("[5] Display a book by id\n");
-	printf("[6] Display a book by title\n");
-	printf("[7] Display books\n");
-	printf("[8] Display books by surname search\n");
-	printf("[9] Exit\n");
+	printf(" [1] Load books from file\n"
+			" [2] Save books to file\n"
+			" [3] Add a book\n"
+			" [4] Delete a book by id\n"
+			" [5] Display a book by id\n"
+			" [6] Display a book by title\n"
+			" [7] Display books\n"
+			" [8] Display books by surname search\n"
+			" [9] Exit\n");
 
 	/* main loop */
 	while ((opt = get_option()) != 9) {
