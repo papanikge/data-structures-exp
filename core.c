@@ -17,8 +17,9 @@
 #include "core.h"
 #include "avl.h"
 
-/* global main in-memory dynamic database */
+/* global main in-memory dynamic database and accompanied structures */
 Data db;
+AvlNode *avl;
 /* is the db sorted? */
 int sorted = 0;
 
@@ -189,13 +190,13 @@ int main(int argc, const char **argv)
 {
 	unsigned int i, opt;
 	char filename[50];
-	AvlNode *avl = NULL;
-
 	/* handle data base file name (not safe) */
 	if (argc >= 2)
 		strcpy(filename, argv[1]);
 	else
 		strcpy(filename, "datafile");
+
+	avl  = NULL;
 
 	init_db(filename);
 

@@ -20,6 +20,9 @@
  */
 
 #include "core.h"
+#include "avl.h"
+
+extern AvlNode *avl;
 
 /* 
  * Chop trailing newline from a string inplace.
@@ -122,6 +125,9 @@ int add_book(Book* A)
 		/* now add the book at the end */
 		db.arr[db.numberOfBooks] = *A;
 		db.numberOfBooks++;
+		/* trees */
+		avl  = avl_insert(&db.arr[db.numberOfBooks], avl);
+		/* finally */
 		sorted = 0;
 		free(A);
 		return 0;
@@ -135,6 +141,9 @@ int remove_book(long index)
 	Book *D;
 	Book tmp;
 	long size = (db.numberOfBooks - 1) * sizeof(Book);
+
+	/* removing from trees */
+	avl  = avl_delete(&db.arr[index], avl);
 
 	/* moving the interesting node at the end */
 	tmp = db.arr[index];
