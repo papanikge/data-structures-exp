@@ -206,9 +206,14 @@ void init_db(const char *file)
 			memset(line, 0, sizeof(line));
 			continue;
 		}
+
 		/* set defaults here */
 		if (strlen(the_year) == 0)
 			strcpy(the_year, "0000");
+
+		/* check for duplicates */
+		if (btraverse(atol(given_id), 1) != -1)
+			continue;
 
 		/* Done parsing. Creating book */
 		Book *B;
