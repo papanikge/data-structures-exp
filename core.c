@@ -15,6 +15,7 @@
  **/
 
 #include "core.h"
+#include "avl.h"
 
 /* global main in-memory dynamic database */
 Data db;
@@ -186,15 +187,21 @@ static void user_remove_book(void)
 
 int main(int argc, const char **argv)
 {
-	unsigned int opt;
-	/* handle data base file name */
+	unsigned int i, opt;
 	char filename[50];
+	AvlNode *avl = NULL;
+
+	/* handle data base file name (not safe) */
 	if (argc >= 2)
 		strcpy(filename, argv[1]);
 	else
 		strcpy(filename, "datafile");
 
 	init_db(filename);
+
+	/* initialize avl tree (for id) */
+	for (i = 0; i < db.numberOfBooks; i++)
+		avl = avl_insert(&db.arr[i], avl);
 
 	printf("[1] Load books from file\n");
 	printf("[2] Save books to file\n");
@@ -242,6 +249,8 @@ int main(int argc, const char **argv)
 
 	/* got exit command. save and quit */
 	/* print_db(filename); */
+	/* free memory */
+	avl_dispose(avl);
 	free(db.arr);
 	return 0;
 }

@@ -4,27 +4,33 @@
 #
 # $? is for the files on the right of the :
 # $@ is for the target name
+#
+# tags target requires ctags tool
 
 CC=gcc
 WARN=-Wall -Wextra
-OPT=-O0
+OPT=-O3
 FLAGS=-g
+HEADER=core.h
 
 # default target that compiles and runs
-all: core db search
-	$(CC) core.o db.o sort-search.o -o program
+all: core db search avl
+	$(CC) core.o db.o sort-search.o avl.o -o program
 	rm *.o
 	@./program
 
 # the compilation target
-core: core.c core.h
+core: core.c $(HEADER)
 	$(CC) $(WARN) $(OPT) $(FLAGS) -c core.c
 
-db: db.c core.h
+db: db.c $(HEADER)
 	$(CC) $(WARN) $(OPT) $(FLAGS) -c db.c
 
-search: sort-search.c core.h
+search: sort-search.c $(HEADER)
 	$(CC) $(WARN) $(OPT) $(FLAGS) -c sort-search.c
+
+avl: avl.c avl.h $(HEADER)
+	$(CC) $(WARN) $(OPT) $(FLAGS) -c avl.c
 
 clean:
 	-@rm -f program base a.out
