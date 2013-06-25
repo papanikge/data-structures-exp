@@ -21,8 +21,11 @@
 
 #include "core.h"
 #include "avl.h"
+#include "trie.h"
 
 extern AvlNode *avl;
+extern TrieNode *trie_title;
+extern TrieNode *trie_name;
 
 /* 
  * Chop trailing newline from a string inplace.
@@ -115,6 +118,8 @@ long find_index_by_id(long id)
 int add_book(Book* A)
 {
 	long size = (db.numberOfBooks + 1) * sizeof(Book);
+	char *name;
+	char *title;
 	/* the new array */
 	Book* D;
 
@@ -126,7 +131,12 @@ int add_book(Book* A)
 		db.arr[db.numberOfBooks] = *A;
 		db.numberOfBooks++;
 		/* trees */
+		title = db.arr[db.numberOfBooks].title;
+		name  = db.arr[db.numberOfBooks].authors[0].last;
+
 		avl  = avl_insert(&db.arr[db.numberOfBooks], avl);
+		trie_title = trie_insert(title, &db.arr[db.numberOfBooks], trie_title);
+		trie_name  = trie_insert(name,  &db.arr[db.numberOfBooks], trie_name);
 		/* finally */
 		sorted = 0;
 		free(A);
@@ -140,10 +150,16 @@ int remove_book(long index)
 {
 	Book *D;
 	Book tmp;
+	char *name;
+	char *title;
 	long size = (db.numberOfBooks - 1) * sizeof(Book);
 
+	title = db.arr[index].title;
+	name  = db.arr[index].authors[0].last;
 	/* removing from trees */
 	avl  = avl_delete(&db.arr[index], avl);
+	trie_title = trie_delete(title, trie_title);
+	trie_name  = trie_delete(name,  trie_name);
 
 	/* moving the interesting node at the end */
 	tmp = db.arr[index];

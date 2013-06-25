@@ -33,6 +33,10 @@ TrieNode* trie_insert(char *str, Book* v, TrieNode *t)
 {
 	int index;
 
+	/* safety */
+	if (!t)
+		return NULL;
+
 	if (str[0] == '\0') {
 		/* reached the end */
 		t->key   = '\0';
@@ -47,7 +51,7 @@ TrieNode* trie_insert(char *str, Book* v, TrieNode *t)
 		t->key = str[0];
 		/* shift the head of the string to continue recursing */
 		str++;
-		t->edges[index] = trie_insert(t->edges[index], str, v);
+		t->edges[index] = trie_insert(str, v, t->edges[index]);
 	}
 	return t;
 }
@@ -61,6 +65,10 @@ TrieNode* trie_delete(char *str, TrieNode *t)
 	int all_null = 1;
 	/* optimization flag in case of non-existence */
 	int no_need = 0;
+
+	/* safety */
+	if (!t)
+		return NULL;
 
 	if (str[0] == '\0') {
 		/* reached it */
@@ -76,7 +84,7 @@ TrieNode* trie_delete(char *str, TrieNode *t)
 		}
 		/* shift the head of the string to continue recursing */
 		str++;
-		t->edges[index] = trie_delete(t->edges[index], str);
+		t->edges[index] = trie_delete(str, t->edges[index]);
 		/* we need to delete all the nodes that lead to the one we removed
 		 * if there are no other children */
 		if (no_need)
@@ -100,6 +108,10 @@ Book* trie_find(char *str, TrieNode *t)
 	Book* b;
 	int index;
 
+	/* safety */
+	if (!t)
+		return NULL;
+
 	if (str[0] == '\0')
 		return t->value;
 	else {
@@ -110,7 +122,7 @@ Book* trie_find(char *str, TrieNode *t)
 			return NULL;
 		/* shift the head of the string to continue recursing */
 		str++;
-		b = trie_find(t->edges[index], str);
+		b = trie_find(str, t->edges[index]);
 		/* return whatever came back, Book or NULL */
 		return b;
 	}
@@ -123,7 +135,7 @@ void trie_dispose(TrieNode* t)
 
 	if (t) {
 		for (i = 0; i < 26; i++)
-			trie_dispose(t->edge[i]);
+			trie_dispose(t->edges[i]);
 		free(t);
 	}
 	return;

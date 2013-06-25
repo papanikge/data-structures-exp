@@ -16,10 +16,13 @@
 
 #include "core.h"
 #include "avl.h"
+#include "trie.h"
 
 /* global main in-memory dynamic database and accompanied structures */
 Data db;
 AvlNode *avl;
+TrieNode *trie_title;
+TrieNode *trie_name;
 /* is the db sorted? */
 int sorted = 0;
 
@@ -197,12 +200,17 @@ int main(int argc, const char **argv)
 		strcpy(filename, "datafile");
 
 	avl  = NULL;
+	trie_title = NULL;
+	trie_name  = NULL;
 
 	init_db(filename);
 
-	/* initialize avl tree (for id) */
-	for (i = 0; i < db.numberOfBooks; i++)
+	/* initialize avl tree (for id) and tries */
+	for (i = 0; i < db.numberOfBooks; i++) {
 		avl = avl_insert(&db.arr[i], avl);
+		trie_title = trie_insert(db.arr[i].title, &db.arr[i], trie_title);
+		trie_name  = trie_insert(db.arr[i].authors[0].last, &db.arr[i], trie_name);
+	}
 
 	printf(" [1] Load books from file\n"
 			" [2] Save books to file\n"
@@ -252,6 +260,8 @@ int main(int argc, const char **argv)
 	/* print_db(filename); */
 	/* free memory */
 	avl_dispose(avl);
+	trie_dispose(trie_title);
+	trie_dispose(trie_name);
 	free(db.arr);
 	return 0;
 }
