@@ -64,10 +64,10 @@ TrieNode* trie_delete(char *str, TrieNode *t)
 	/* true by default */
 	int all_null = 1;
 	/* optimization flag in case of non-existence */
-	int no_need = 0;
+	static int no_need = 0;
 
 	/* safety */
-	if (!t)
+	if (!t || no_need)
 		return NULL;
 
 	if (str[0] == '\0') {
@@ -87,8 +87,6 @@ TrieNode* trie_delete(char *str, TrieNode *t)
 		t->edges[index] = trie_delete(str, t->edges[index]);
 		/* we need to delete all the nodes that lead to the one we removed
 		 * if there are no other children */
-		if (no_need)
-			return NULL;
 		for (i = 0; i < 26; i++)
 			if (t->edges[i])
 				all_null = 0;
