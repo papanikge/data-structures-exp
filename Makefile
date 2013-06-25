@@ -14,8 +14,8 @@ FLAGS=-g
 HEADER=core.h
 
 # default target that compiles and runs
-all: core db search avl
-	$(CC) core.o db.o sort-search.o avl.o -o program
+all: core db search avl trie
+	$(CC) core.o db.o sort-search.o avl.o trie.o -o program
 	rm *.o
 	@./program
 
@@ -31,6 +31,9 @@ search: sort-search.c $(HEADER)
 
 avl: avl.c avl.h $(HEADER)
 	$(CC) $(WARN) $(OPT) $(FLAGS) -c avl.c
+
+trie: trie.c trie.h $(HEADER)
+	$(CC) $(WARN) $(OPT) $(FLAGS) -c trie.c
 
 clean:
 	-@rm -f program base a.out
