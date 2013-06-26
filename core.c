@@ -40,6 +40,7 @@ inline void* smalloc(const unsigned int size)
 	ptr = malloc(size);
 	if(!ptr)
 		fatal("on memory allocation");
+	memset(ptr, 0, size);
 	return ptr;
 }
 

@@ -42,7 +42,6 @@ static void chomp(char* s)
 static Book* create_book(long given_id, char* name, short year, char* pub)
 {
 	Book *b = smalloc(sizeof(Book));
-	memset(b, 0, sizeof(Book));
 	b->id = given_id;
 	strncpy(b->title, name, 256);
 	strncpy(b->publisher, pub, 40);
@@ -281,7 +280,6 @@ void print_db(const char *file)
 	/* allocate memory for one and reallocate accordingly */
 	size = sizeof(char) * 56 * 2;
 	name = smalloc(size);
-	memset(name, 0, size);
 	/* iterate over the db and add to file */
 	for (i=0; (unsigned long)i < db.numberOfBooks; i++) {
 		n = db.arr[i].numberOfAuthors;
