@@ -15,7 +15,7 @@ typedef struct AvlNode {
 
 /* prototypes */
 void avl_dispose(AvlNode* t);
-AvlNode* avl_find(const long f, AvlNode* t);
+Book* avl_find(const long f, AvlNode* t);
 AvlNode* avl_insert(Book* b, AvlNode* t);
 AvlNode* avl_delete(Book* b, AvlNode* t);
 

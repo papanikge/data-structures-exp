@@ -38,6 +38,20 @@ static AvlNode* avl_find_max(AvlNode* t)
 	return t;
 }
 
+/* find a specific node's key in the tree (recursively) */
+static AvlNode* avl_find_node(const long f, AvlNode* t)
+{
+	if (!t)
+		return NULL;
+	if (f < t->cont->id)
+		return avl_find_node(f, t->left);
+	else if (f > t->cont->id)
+		return avl_find_node(f, t->right);
+	else
+		/* found it */
+		return t;
+}
+
 /*
  * Rotations. Note:
  * These functions do *not* check for child existence
@@ -211,18 +225,12 @@ AvlNode* avl_delete(Book* b, AvlNode* t)
 	return t;
 }
 
-/* find a specific node's key in the tree (recursively) */
-AvlNode* avl_find(const long f, AvlNode* t)
+/* return content for found node */
+Book* avl_find(const long f, AvlNode* t)
 {
-	if (!t)
-		return NULL;
-	if (f < t->cont->id)
-		return avl_find(f, t->left);
-	else if (f > t->cont->id)
-		return avl_find(f, t->right);
-	else
-		/* found it */
-		return t;
+	AvlNode *n;
+	n = avl_find_node(f, t);
+	return n->cont;
 }
 
 /* remove and free all nodes of an AVL tree (recursively) */
