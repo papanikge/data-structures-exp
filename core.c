@@ -17,7 +17,7 @@
 #include "core.h"
 #include "avl.h"
 #include "trie.h"
-#include <time.h>
+#include <sys/time.h>
 
 /* global main in-memory dynamic database and accompanied structures */
 Data db;
@@ -51,6 +51,16 @@ inline void clear_stream(void)
 	int tmp = fgetc(stdin);
 	if (tmp != '\n')
 		ungetc(tmp, stdin);
+}
+
+/* calculate time deltas from a starting point */
+static void calc_delta(struct timeval *start, double *sec, double *usec)
+{
+	struct timeval end;
+
+	gettimeofday(&end, NULL);
+	*sec  = ((end.tv_sec  - start->tv_sec)); 
+	*usec = ((end.tv_usec - start->tv_usec)); 
 }
 
 /* get a valid option from user */
@@ -204,7 +214,8 @@ int main(int argc, const char **argv)
 {
 	int k;
 	unsigned int i;
-	clock_t start, end;
+	double sec, usec;
+	struct timeval start, end;
 	char filename[50];
 	/* handle data base file name (not safe) */
 	if (argc >= 2)
@@ -226,34 +237,35 @@ int main(int argc, const char **argv)
 		trie_name  = trie_insert(db.arr[i].authors[0].last, &db.arr[i], trie_name);
 	}
 
-	printf(" -== User Interactions here ==-\n");
-	
+	printf(" -== User Interactions here ==-\nTimes:\n");
 
 	/* linear search */
-	start = clock();
+	gettimeofday(&start, NULL);
 		for (k = 0; k < 1000; k++)
-			find_index_by_id(k*308);
-	end = clock();
-	printf("==>Times:\n\tLinear:   %f\n", (end - start) / CLOCKS_PER_SEC);
-	/* binary search */
-	start = clock();
-		for (k = 0; k < 1000; k++)
-			btraverse(k*308, 1);
-	end = clock();
-	printf("\tBinary:    %f\n", (end - start) / CLOCKS_PER_SEC);
-	/* binary interpollation search */
-	start = clock();
-		for (k = 0; k < 1000; k++)
-			btraverse(k*308, 2);
-	end = clock();
-	printf("\tBIS:       %f\n", (end - start) / CLOCKS_PER_SEC);
-	/* avl trees search */
-	start = clock();
-		for (k = 0; k < 1000; k++)
-			avl_find(k*308, avl);
-	end = clock();
-	printf("\tAVL trees: %f\n", (end - start) / CLOCKS_PER_SEC);
+			find_index_by_id(k * 3083);
+	calc_delta(&start, &sec, &usec);
+	printf("\tLinear: %1.f,%1.f sec\n", sec, usec);
 
+	/* binary search */
+	gettimeofday(&start, NULL);
+		for (k = 0; k < 1000; k++)
+			btraverse(k * 3083, 1);
+	calc_delta(&start, &sec, &usec);
+	printf("\tBinary: %1.f,%1.f sec\n", sec, usec);
+
+	/* binary interpollation search */
+	/* gettimeofday(&start, NULL); */
+	/* 	for (k = 0; k < 1000; k++) */
+	/* 		btraverse(k * 3083, 2); */
+	/* calc_delta(&start, &sec, &usec); */
+	/* printf("\tBIS:   %1.f,%1.f sec\n", sec, usec); */
+
+	/* avl trees search */
+	gettimeofday(&start, NULL);
+		for (k = 0; k < 1000; k++)
+			avl_find(k * 3083, avl);
+	calc_delta(&start, &sec, &usec);
+	printf("\tAVL:    %1.f,%1.f sec\n", sec, usec);
 
 	/* free, quit */
 	avl_dispose(avl);
