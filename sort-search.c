@@ -19,12 +19,13 @@ long btraverse(long id, int mode)
 		 * 2 - binary interpolation search
 		 */
 		if (mode == 1)
-			middle = (search_to + search_from)/2;
-		else {
+			middle = (search_to + search_from) / 2;
+		else if (mode == 2) {
 			middle = search_from +
 				((id - db.arr[search_from].id) * (search_to - search_from))/
 				(db.arr[search_to].id - db.arr[search_from].id);
-		}
+		} else
+			fatal("wrong btraverse mode");
 
 		/* a way to find out which is bigger */
 		get = id - db.arr[middle].id;

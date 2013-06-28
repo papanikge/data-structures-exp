@@ -267,9 +267,7 @@ int main(int argc, const char **argv)
 		}
 	}
 
-	/* got exit command. save and quit */
-	/* print_db(filename); */
-	/* free memory */
+	/* got exit command. free mem and quit */
 	avl_dispose(avl);
 	trie_dispose(trie_title);
 	trie_dispose(trie_name);

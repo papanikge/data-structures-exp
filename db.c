@@ -268,9 +268,8 @@ void print_db(const char *file)
 	int size;
 	char *name;
 
-	if (strcmp(file, "stdout") == 0){
+	if (strcmp(file, "stdout") == 0)
 		fd = stdout;
-	}
 	else {
 		fd = fopen(file, "w");
 		if (!fd) fatal("while opening data file for writing");
@@ -357,7 +356,7 @@ void user_add_book(void)
 	split_create_authors(B, name);
 
 	if (!add_book(B)) {
-		printf("Book node added to database [id: %ld]\n", B->id);
+		printf("Book node added to database\n");
 		return;
 	}
 
