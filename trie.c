@@ -24,7 +24,7 @@ static char* setup_string(char *str)
 	int i,j;
 	char *p, *start;
 
-	start = p = (char*) smalloc(strlen(str));
+	start = p = (char*) smalloc(strlen(str) + 1);
 	for (i = j = 0; str[i] != '\0'; i++)
 		if (isalpha(str[i])) {
 			p[j] = str[i];
@@ -54,7 +54,7 @@ static TrieNode* _trie_insert(char *s, Book *v, TrieNode *t)
 		if(!t->edges[index])
 			t->edges[index] = trie_initialize(*s);
 		/* key, for later */
-		t->key = tolower(*s);
+		t->key = *s;
 		/* one more shift for the next character */
 		s++;
 		t->edges[index] = _trie_insert(s, v, t->edges[index]);
