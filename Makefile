@@ -22,19 +22,19 @@ all: core db search avl trie
 
 # the compilation target
 core: core.c $(HEADER)
-	$(CC) $(WARN) $(OPT) $(FLAGS) -c core.c
+	$(CC) $(OPT) $(FLAGS) -c core.c
 
 db: db.c $(HEADER)
-	$(CC) $(WARN) $(OPT) $(FLAGS) -c db.c
+	$(CC) $(OPT) $(FLAGS) -c db.c
 
 search: sort-search.c $(HEADER)
-	$(CC) $(WARN) $(OPT) $(FLAGS) -c sort-search.c
+	$(CC) $(OPT) $(FLAGS) -c sort-search.c
 
 avl: avl.c avl.h $(HEADER)
-	$(CC) $(WARN) $(OPT) $(FLAGS) -c avl.c
+	$(CC) $(OPT) $(FLAGS) -c avl.c
 
 trie: trie.c trie.h $(HEADER)
-	$(CC) $(WARN) $(OPT) $(FLAGS) -c trie.c
+	$(CC) $(OPT) $(FLAGS) -c trie.c
 
 clean:
 	-@rm -f $(EXE) a.out
