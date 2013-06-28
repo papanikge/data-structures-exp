@@ -12,12 +12,13 @@ WARN=-Wall -Wextra
 OPT=-O3
 FLAGS=-g
 HEADER=core.h
+EXE=program
 
 # default target that compiles and runs
 all: core db search avl trie
-	$(CC) core.o db.o sort-search.o avl.o trie.o -o program
+	$(CC) core.o db.o sort-search.o avl.o trie.o -o $(EXE)
 	rm *.o
-	@./program
+	@./$(EXE)
 
 # the compilation target
 core: core.c $(HEADER)
@@ -36,9 +37,12 @@ trie: trie.c trie.h $(HEADER)
 	$(CC) $(WARN) $(OPT) $(FLAGS) -c trie.c
 
 clean:
-	-@rm -f program base a.out
+	-@rm -f $(EXE) a.out
 
 tags:
 	ctags -R .
 
-.PHONY: clean tags
+valg:
+	valgrind ./$(EXE)
+
+.PHONY: clean tags valg
