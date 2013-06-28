@@ -194,10 +194,14 @@ AvlNode* avl_delete(const long b, AvlNode* t)
 
 	if (b == t->cont->id) {
 		/* find biggest value of left subtree and swap */
-		m = avl_find_max(t->left);
-		t->cont = m->cont;
-		/* delete that one */
-		free(m);
+		if (t->height > 1) {
+			m = avl_find_max(t->left);
+			t->cont = m->cont;
+			/* delete that one */
+			free(m);
+		} else
+			free(t);
+		return NULL;
 	}
 	else if (b < t->cont->id) {
 		t->left = avl_delete(b, t->left);
@@ -208,6 +212,8 @@ AvlNode* avl_delete(const long b, AvlNode* t)
 			else
 				t = left_right_rotation(t);
 		}
+		t->height = max(calc_height(t->left), calc_height(t->right)) + 1;
+		return t;
 	}
 	else if (b > t->cont->id) {
 		t->right = avl_delete(b, t->right);
@@ -218,11 +224,11 @@ AvlNode* avl_delete(const long b, AvlNode* t)
 			else
 				t = right_left_rotation(t);
 		}
+		t->height = max(calc_height(t->left), calc_height(t->right)) + 1;
+		return t;
 	}
-	/* else Book is not present */
-
-	t->height = max(calc_height(t->left), calc_height(t->right)) + 1;
-	return t;
+	/* else */
+	return NULL;
 }
 
 /* return content for found node */
