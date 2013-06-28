@@ -17,6 +17,7 @@
 #include "core.h"
 #include "avl.h"
 #include "trie.h"
+#include <time.h>
 
 /* global main in-memory dynamic database and accompanied structures */
 Data db;
@@ -201,7 +202,9 @@ static void user_remove_book(void)
 
 int main(int argc, const char **argv)
 {
-	unsigned int i, opt;
+	int k;
+	unsigned int i;
+	clock_t start, end;
 	char filename[50];
 	/* handle data base file name (not safe) */
 	if (argc >= 2)
@@ -223,51 +226,36 @@ int main(int argc, const char **argv)
 		trie_name  = trie_insert(db.arr[i].authors[0].last, &db.arr[i], trie_name);
 	}
 
-	printf(" [1] Load books from file\n"
-			" [2] Save books to file\n"
-			" [3] Add a book\n"
-			" [4] Delete a book by id\n"
-			" [5] Display a book by id\n"
-			" [6] Display a book by title\n"
-			" [7] Display books\n"
-			" [8] Display books by surname search\n"
-			" [9] Exit\n");
+	printf(" -== User Interactions here ==-\n");
+	
 
-	/* main loop */
-	while ((opt = get_option()) != 9) {
-		switch (opt) {
-			case 1:
-				db_dispose();
-				init_db(filename);
-				break;
-			case 2:
-				print_db(filename);
-				break;
-			case 3:
-				user_add_book();
-				break;
-			case 4:
-				user_remove_book();
-				break;
-			case 5:
-				search_by_id();
-				break;
-			case 6:
-				search_by_title();
-				break;
-			case 7:
-				print_db("stdout");
-				break;
-			case 8:
-				search_by_surname();
-				break;
-			default:
-				fatal("get_option() returns something wrong");
-				break;
-		}
-	}
+	/* linear search */
+	start = clock();
+		for (k = 0; k < 1000; k++)
+			find_index_by_id(k*308);
+	end = clock();
+	printf("==>Times:\n\tLinear:   %f\n", (end - start) / CLOCKS_PER_SEC);
+	/* binary search */
+	start = clock();
+		for (k = 0; k < 1000; k++)
+			btraverse(k*308, 1);
+	end = clock();
+	printf("\tBinary:    %f\n", (end - start) / CLOCKS_PER_SEC);
+	/* binary interpollation search */
+	start = clock();
+		for (k = 0; k < 1000; k++)
+			btraverse(k*308, 2);
+	end = clock();
+	printf("\tBIS:       %f\n", (end - start) / CLOCKS_PER_SEC);
+	/* avl trees search */
+	start = clock();
+		for (k = 0; k < 1000; k++)
+			avl_find(k*308, avl);
+	end = clock();
+	printf("\tAVL trees: %f\n", (end - start) / CLOCKS_PER_SEC);
 
-	/* got exit command. free mem and quit */
+
+	/* free, quit */
 	avl_dispose(avl);
 	trie_dispose(trie_title);
 	trie_dispose(trie_name);
