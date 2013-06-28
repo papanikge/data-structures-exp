@@ -201,8 +201,9 @@ int main(int argc, const char **argv)
 		strcpy(filename, "datafile");
 
 	avl  = NULL;
-	trie_title = NULL;
-	trie_name  = NULL;
+	/* we need \0 to be an empty trie */
+	trie_title = trie_initialize('\0');
+	trie_name  = trie_initialize('\0');
 
 	init_db(filename);
 
