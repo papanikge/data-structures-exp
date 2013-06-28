@@ -187,33 +187,33 @@ AvlNode* avl_insert(Book* b, AvlNode* t)
 }
 
 /* remove a node in the tree (recursively) */
-AvlNode* avl_delete(Book* b, AvlNode* t)
+AvlNode* avl_delete(const long b, AvlNode* t)
 {
 	AvlNode *m;
 	int balance_factor;
 
-	if (b->id == t->cont->id) {
+	if (b == t->cont->id) {
 		/* find biggest value of left subtree and swap */
 		m = avl_find_max(t->left);
 		t->cont = m->cont;
 		/* delete that one */
 		free(m);
 	}
-	else if (b->id < t->cont->id) {
+	else if (b < t->cont->id) {
 		t->left = avl_delete(b, t->left);
 		balance_factor = calc_height(t->left) - calc_height(t->right);
 		if (balance_factor == 2) {
-			if (b->id < t->left->cont->id)
+			if (b < t->left->cont->id)
 				t = right_rotation(t);
 			else
 				t = left_right_rotation(t);
 		}
 	}
-	else if (b->id > t->cont->id) {
+	else if (b > t->cont->id) {
 		t->right = avl_delete(b, t->right);
 		balance_factor = calc_height(t->right) - calc_height(t->left);
 		if (balance_factor == 2) {
-			if (b->id > t->right->cont->id)
+			if (b > t->right->cont->id)
 				t = left_rotation(t);
 			else
 				t = right_left_rotation(t);
@@ -230,7 +230,10 @@ Book* avl_find(const long f, AvlNode* t)
 {
 	AvlNode *n;
 	n = avl_find_node(f, t);
-	return n->cont;
+	if (n)
+		return n->cont;
+	else
+		return NULL;
 }
 
 /* remove and free all nodes of an AVL tree (recursively) */

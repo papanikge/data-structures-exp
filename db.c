@@ -156,7 +156,7 @@ int remove_book(long index)
 	title = db.arr[index].title;
 	name  = db.arr[index].authors[0].last;
 	/* removing from trees */
-	avl  = avl_delete(&db.arr[index], avl);
+	avl  = avl_delete(db.arr[index].id, avl);
 	trie_title = trie_delete(title, trie_title);
 	trie_name  = trie_delete(name,  trie_name);
 
