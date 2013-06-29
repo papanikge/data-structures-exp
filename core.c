@@ -267,6 +267,32 @@ int main(int argc, const char **argv)
 	calc_delta(&start, &sec, &usec);
 	printf("\tAVL:    %1.f,%1.f sec\n", sec, usec);
 
+	/* tries title search */
+	gettimeofday(&start, NULL);
+		for (k = 0; k < 1000; k++) {
+			if (k % 2)
+				/* not present */
+				trie_find("Einmal ist keeeeeim", trie_title);
+			else
+				/* present */
+				trie_find("Andamios", trie_title);
+		}
+	calc_delta(&start, &sec, &usec);
+	printf("\tTries1: %1.f,%1.f sec (with titles)\n", sec, usec);
+
+	/* tries name search */
+	gettimeofday(&start, NULL);
+		for (k = 0; k < 1000; k++) {
+			if (k % 2)
+				/* not present */
+				trie_find("bqqbbqqbbqqbqbb", trie_name);
+			else
+				/* present */
+				trie_find("Hall", trie_name);
+		}
+	calc_delta(&start, &sec, &usec);
+	printf("\tTries2: %1.f,%1.f sec (with names)\n", sec, usec);
+
 	/* free, quit */
 	avl_dispose(avl);
 	trie_dispose(trie_title);
