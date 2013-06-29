@@ -25,6 +25,10 @@ long btraverse(long id, int mode)
 			middle = search_from +
 				((id - db.arr[search_from].id) * (search_to - search_from))/
 				(db.arr[search_to].id - db.arr[search_from].id);
+			if (middle < 0)
+				middle = -middle;
+			if (middle > db.numberOfBooks)
+				middle = db.numberOfBooks;
 		} else
 			fatal("wrong btraverse mode");
 
