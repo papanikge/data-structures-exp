@@ -257,11 +257,11 @@ int main(int argc, const char **argv)
 	printf("\tBinary: %1.f,%1.f sec\n", sec, usec);
 
 	/* binary interpollation search */
-	/* gettimeofday(&start, NULL); */
-	/* 	for (k = 0; k < 1000; k++) */
-	/* 		btraverse(k * 3083, 2); */
-	/* calc_delta(&start, &sec, &usec); */
-	/* printf("\tBIS:   %1.f,%1.f sec\n", sec, usec); */
+	gettimeofday(&start, NULL);
+		for (k = 0; k < 1000; k++)
+			btraverse(k * 3083, 2);
+	calc_delta(&start, &sec, &usec);
+	printf("\tBIS:   %1.f,%1.f sec\n", sec, usec);
 
 	/* avl trees search */
 	gettimeofday(&start, NULL);
