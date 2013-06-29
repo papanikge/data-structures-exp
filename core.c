@@ -61,6 +61,9 @@ static void calc_delta(struct timeval *start, double *sec, double *usec)
 	gettimeofday(&end, NULL);
 	*sec  = ((end.tv_sec  - start->tv_sec)); 
 	*usec = ((end.tv_usec - start->tv_usec)); 
+	/* start micro seconds may be bigger */
+	if (*usec < 0)
+		*usec = -(*usec);
 }
 
 /* get a valid option from user */
