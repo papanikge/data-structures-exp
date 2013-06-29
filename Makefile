@@ -18,7 +18,6 @@ EXE=program
 all: core db search avl trie
 	$(CC) core.o db.o sort-search.o avl.o trie.o -o $(EXE)
 	rm *.o
-	@./$(EXE)
 
 # the compilation target
 core: core.c $(HEADER)
