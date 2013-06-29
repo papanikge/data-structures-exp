@@ -8,7 +8,8 @@
  * see below for multiple modes */
 long btraverse(long id, int mode)
 {
-	long middle, get;
+	long get;
+	long middle = 0;
 	long search_from = 0;
 	long search_to   = db.numberOfBooks - 1;
 
