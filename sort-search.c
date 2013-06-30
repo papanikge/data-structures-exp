@@ -23,9 +23,8 @@ long btraverse(long id, int mode)
 		if (mode == 1)
 			middle = (search_to + search_from) / 2;
 		else if (mode == 2) {
-			middle = search_from +
-				((id - db.arr[search_from].id) * (search_to - search_from)) /
-				(db.arr[search_to].id - db.arr[search_from].id);
+			middle = (id - db.arr[search_from].id) * (search_to - search_from);
+			middle = (search_from + middle) / (db.arr[search_to].id - db.arr[search_from].id);
 			/* out of range is possible in the interpolation formula */
 			if (middle < 0)
 				middle = -middle;
