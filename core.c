@@ -116,8 +116,10 @@ static void search_by_id(void)
 				sort_db();
 				sorted = 1;
 			}
-			/* using way - 1 here to get the correct mode in btraverse */
-			index = btraverse(id, way - 1);
+			if (way == 2)
+				index = bsearch_by_id(id);
+			else if (way == 3)
+				index = bis_by_id(id);
 			break;
 		default:
 			printf("Wrong answer\n");
@@ -216,7 +218,6 @@ static void user_remove_book(void)
 int main(int argc, const char **argv)
 {
 	int k;
-	long f;
 	unsigned int i;
 	double sec, usec;
 	struct timeval start, end;
@@ -253,19 +254,14 @@ int main(int argc, const char **argv)
 	/* binary search */
 	gettimeofday(&start, NULL);
 		for (k = 0; k < 1000; k++)
-			btraverse(k * 3083, 1);
+			bsearch_by_id(k * 3083);
 	calc_delta(&start, &sec, &usec);
 	printf("\tBinary: %1.f,%1.f sec\n", sec, usec);
 
 	/* binary interpollation search */
 	gettimeofday(&start, NULL);
-		for (k = 1; k < 1000; k++) {
-			f = btraverse(k * 3083, 2);
-			if (f == -1)
-				printf("NOT FOUND\n");
-			else
-				printf("FOUND\n");
-		}
+		for (k = 1; k < 1000; k++)
+			bis_by_id(k * 3083);
 	calc_delta(&start, &sec, &usec);
 	printf("\tBIS:    %1.f,%1.f sec\n", sec, usec);
 

@@ -48,4 +48,5 @@ void user_add_book(void);
 void sort_db(void);
 void split_create_authors(Book* B, char* full);
 long find_index_by_id(long id);
-long btraverse(long id, int mode);
+long bsearch_by_id(long id);
+long bis_by_id(long id);

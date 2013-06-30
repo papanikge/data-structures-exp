@@ -4,39 +4,53 @@
 
 #include "core.h"
 
-/* binary traversing through the db in order to search
- * see below for multiple modes */
-long btraverse(long id, int mode)
+/* plain binary search with upper and lower limit */
+long bsearch_by_id(long id)
 {
 	long get;
 	long middle = 0;
 	long search_from = 0;
 	long search_to   = db.numberOfBooks - 1;
 
-	while (search_to > search_from) {
-		printf("NEW!! Searching for:%ld --- from:%ld to:%ld\n", id, search_from, search_to);
-		/*
-		 * calculate pivot, based on <mode>. This is to avoid function pointers
-		 * 1 - pure binary search
-		 * 2 - binary interpolation search
-		 */
-		if (mode == 1)
-			middle = (search_to + search_from) / 2;
-		else if (mode == 2) {
-			middle = (id - db.arr[search_from].id) * (search_to - search_from);
-			middle = (search_from + middle) / (db.arr[search_to].id - db.arr[search_from].id);
-			/* out of range is possible in the interpolation formula */
-			if (middle < 0)
-				middle = -middle;
-			else if (middle > db.numberOfBooks)
-				middle = db.numberOfBooks;
-		} else
-			fatal("wrong btraverse mode");
+	while (search_to >= search_from) {
+		middle = (search_to + search_from) / 2;
 
 		/* a way to find out which is bigger */
 		get = id - db.arr[middle].id;
 
-		printf("middle %ld gets: %ld\n", middle, get);
+		if (get > 0)
+			search_from = middle + 1;
+		else if (get < 0)
+			search_to = middle - 1;
+		else
+			return middle;
+	}
+	return -1;
+}
+
+/* binary interpolation search */
+long bis_by_id(long id)
+{
+	long get;
+	long m1, m2, m3; /* helpers for pivot */
+	long middle = 0;
+	long search_from = 0;
+	long search_to   = db.numberOfBooks - 1;
+
+	/* while (search_to > search_from) { */
+	while (db.arr[search_from].id <= id && db.arr[search_to].id >= id) {
+		m1 = (search_to - search_from) * (id - db.arr[search_from].id);
+		m2 = db.arr[search_to].id - db.arr[search_from].id;
+		m3 = m1/m2;
+		middle = search_from + m3;
+		/* out of range is possible in the interpolation formula */
+		if (middle < 0)
+			middle = -middle;
+		else if (middle > db.numberOfBooks)
+			middle = db.numberOfBooks;
+
+		/* a way to find out which is bigger */
+		get = id - db.arr[middle].id;
 
 		if (get > 0)
 			search_from = middle + 1;
@@ -46,10 +60,10 @@ long btraverse(long id, int mode)
 			return middle;
 	}
 	/* don't follow the same way if searching one cell */
-	if (search_to == search_from)
-		if (id == db.arr[search_from].id)
-			return search_from;
-	return -1;
+	if (id == db.arr[search_from].id)
+		return search_from;
+	else
+		return -1;
 }
 
 /* Main sort function. The implementations may vary */

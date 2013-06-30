@@ -236,7 +236,7 @@ void init_db(const char *file)
 			strcpy(the_year, "0000");
 
 		/* check for duplicates */
-		if (btraverse(atol(given_id), 1) != -1)
+		if (bsearch_by_id(atol(given_id)) != -1)
 			continue;
 
 		/* Done parsing. Creating book */
