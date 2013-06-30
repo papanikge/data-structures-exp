@@ -13,7 +13,8 @@ long btraverse(long id, int mode)
 	long search_from = 0;
 	long search_to   = db.numberOfBooks - 1;
 
-	while (search_to >= search_from) {
+	while (search_to > search_from) {
+		printf("NEW!! Searching for:%ld --- from:%ld to:%ld\n", id, search_from, search_to);
 		/*
 		 * calculate pivot, based on <mode>. This is to avoid function pointers
 		 * 1 - pure binary search
@@ -23,17 +24,20 @@ long btraverse(long id, int mode)
 			middle = (search_to + search_from) / 2;
 		else if (mode == 2) {
 			middle = search_from +
-				((id - db.arr[search_from].id) * (search_to - search_from))/
+				((id - db.arr[search_from].id) * (search_to - search_from)) /
 				(db.arr[search_to].id - db.arr[search_from].id);
+			/* out of range is possible in the interpolation formula */
 			if (middle < 0)
 				middle = -middle;
-			if (middle > db.numberOfBooks)
+			else if (middle > db.numberOfBooks)
 				middle = db.numberOfBooks;
 		} else
 			fatal("wrong btraverse mode");
 
 		/* a way to find out which is bigger */
 		get = id - db.arr[middle].id;
+
+		printf("middle %ld gets: %ld\n", middle, get);
 
 		if (get > 0)
 			search_from = middle + 1;
@@ -42,6 +46,10 @@ long btraverse(long id, int mode)
 		else
 			return middle;
 	}
+	/* don't follow the same way if searching one cell */
+	if (search_to == search_from)
+		if (id == db.arr[search_from].id)
+			return search_from;
 	return -1;
 }
 

@@ -216,6 +216,7 @@ static void user_remove_book(void)
 int main(int argc, const char **argv)
 {
 	int k;
+	long f;
 	unsigned int i;
 	double sec, usec;
 	struct timeval start, end;
@@ -258,8 +259,13 @@ int main(int argc, const char **argv)
 
 	/* binary interpollation search */
 	gettimeofday(&start, NULL);
-		for (k = 0; k < 1000; k++)
-			btraverse(k * 3083, 2);
+		for (k = 1; k < 1000; k++) {
+			f = btraverse(k * 3083, 2);
+			if (f == -1)
+				printf("NOT FOUND\n");
+			else
+				printf("FOUND\n");
+		}
 	calc_delta(&start, &sec, &usec);
 	printf("\tBIS:    %1.f,%1.f sec\n", sec, usec);
 

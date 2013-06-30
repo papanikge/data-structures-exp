@@ -9,7 +9,7 @@
 
 CC=gcc
 WARN=-Wall -Wextra
-OPT=-O3
+OPT=-O0
 FLAGS=-g
 HEADER=core.h
 EXE=program
