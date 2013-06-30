@@ -195,10 +195,10 @@ void init_db(const char *file)
 
 	fd = fopen(file, "r");
 	if (!fd)
-		fatal("while opening data file");
+		fatal("Is there a datafile?");
 	/* get the total number of books */
 	if (!fgets(line, 8, fd))
-		fatal("while reading data file");
+		fatal("while reading datafile");
 
 	long n = atol(line);
 	if (!n)
