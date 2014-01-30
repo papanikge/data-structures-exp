@@ -52,13 +52,13 @@ void sort_db(void)
 	long i, j;
 
 	/* this is insertion sort. it may still be slow */
-    for (i = 1; (unsigned)i < db.numberOfBooks; i++) {
+	for (i = 1; (unsigned)i < db.numberOfBooks; i++) {
 		/* keep the pivot element to check and have it available later */
-        pivot = db.arr[i];
+		pivot = db.arr[i];
 		/* iterate from i and back. pushing the other */
-        for (j = i -1; j >= 0 && pivot.id < db.arr[j].id; j--)
-            db.arr[j + 1] = db.arr[j];
+		for (j = i -1; j >= 0 && pivot.id < db.arr[j].id; j--)
+			db.arr[j + 1] = db.arr[j];
 		/* found the right place, write the saved */
-        db.arr[j + 1] = pivot;
-    }
+		db.arr[j + 1] = pivot;
+	}
 }

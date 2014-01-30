@@ -220,7 +220,7 @@ void init_db(const char *file)
 
 		/* scanf is like magic */
 		sscanf(line, "\"%[0-9]\";\"%[0-9a-zA-Z.:!'?,)( ]\";\"%[0-9a-zA-Z.:',!?)( ]\";\"%[0-9]\";\"%[0-9a-zA-Z.:'!,?)( ]\"",
-						given_id, book_name, writer, the_year, pub_name);
+				given_id, book_name, writer, the_year, pub_name);
 
 		/* the symbols in the scanf sequence are the only ones we accept to
 		 * be in the strings and we don't want any weird stuff because they
@@ -297,11 +297,11 @@ void print_db(const char *file)
 				strcat(name, ",");
 		}
 		fprintf(fd, "\"%ld\";\"%s\";\"%s\";\"%d\";\"%s\"\n",
-					db.arr[i].id,
-					db.arr[i].title,
-					name,
-					db.arr[i].yearPublished,
-					db.arr[i].publisher);
+				db.arr[i].id,
+				db.arr[i].title,
+				name,
+				db.arr[i].yearPublished,
+				db.arr[i].publisher);
 		memset(name, 0, sizeof(size * n));
 	}
 	free(name);
